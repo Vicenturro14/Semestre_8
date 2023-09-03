@@ -1,0 +1,26 @@
+#lang play
+
+#|
+<BinTree> ::= (leaf <value>)
+             | (in-node <value> <BinTree> <BinTree>)
+|#
+(deftype BinTree
+  (leaf value)
+  (in-node value left right))
+
+;; Constructores
+(deftype my-tree
+  (in-node 5
+           (in-node 4
+                    (leaf 1)
+                    (leaf 8))
+           (leaf 3)))
+
+;; Destructores
+(in-node-value my-tree)
+(in-node-left my-tree)
+
+;; Predicado de tipo
+(BinTree? my-tree)
+(Bin-Tree? 5)
+;; Chequea si la raiz es Bin-Tree, no checkea los nodos hijos
