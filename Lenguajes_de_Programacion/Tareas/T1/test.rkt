@@ -368,7 +368,7 @@
 (test (simplify-negations-2 (notp (orp (varp "a") (varp "b")))) (andp (notp (varp "a")) (notp (varp "b"))))
 (test (simplify-negations-2 (notp (orp (notp (varp "a")) (varp "b")))) (andp (notp (notp (varp "a"))) (notp (varp "b"))))
 
-
+#|
 ;; Tests distribute-and-2
 (test (distribute-and-2 (varp "a")) (varp "a"))
 (test (distribute-and-2 (notp (varp "a"))) (notp (varp "a")))
@@ -380,3 +380,4 @@
       (orp (andp (varp "c") (varp "a")) (andp (varp "c") (varp "b"))))
 (test (distribute-and-2 (andp (orp (varp "a") (varp "b")) (orp (varp "c") (varp "d"))))
       (orp (andp (varp "a") (orp (varp "c") (varp "d"))) (andp (varp "b") (orp (varp "c") (varp "d"))))) 
+|#

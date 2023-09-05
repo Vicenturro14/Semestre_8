@@ -141,18 +141,18 @@
     [(varp n) (varp n)]
     [(andp p q) (andp (simplify-negations p) (simplify-negations q))]
     [(orp p q) (orp (simplify-negations p) (simplify-negations q))]
-    [(notp (notp p)) (simplify-negations p)]
-    [(notp (andp p q)) (orp (notp (simplify-negations p)) (notp (simplify-negations q)))]
-    [(notp (orp p q)) (andp (notp (simplify-negations p)) (notp (simplify-negations q)))]
-    [(notp (varp n)) (notp (varp n))]))
-
-
+    [(notp p) (match p
+                [(varp n) (notp (varp n))]
+                [(andp q r) (orp (notp (simplify-negations q)) (notp (simplify-negations r)))]
+                [(orp q r) (andp (notp (simplify-negations q)) (notp (simplify-negations r)))]
+                [(notp q) (simplify-negations q)])]))
 
 #| Parte B |#
 
 ;; distribute-and :: Prop -> Prop
 ;; Distribuye las conjunciónes de la proposición recibida siguiendo las leyes de distribución correspondientes.
 ;; Es posible que alguna distribución genere una nueva conjunción sin distribuir.
+#|
 (define (distribute-and prop)
   (match prop
     [(varp n) (varp n)]
@@ -161,7 +161,7 @@
     [(andp p q) (andp (distribute-and p) (distribute-and q))]
     [(orp p q) (orp (distribute-and p) (distribute-and q))]
     [(notp p) (notp (distribute-and p))]))
-
+|#
 
 
 #| Parte C |#
@@ -235,50 +235,57 @@
 
 
 ;; eval-2 :: Prop (Listof (Pair String Boolean)) -> Boolean
-
-#|
-;; eval :: Prop (Listof (Pair String Boolean)) -> Boolean
 ;; Retorna el resultado de la proposición recibida evaluada con los valores del ambiente recibido.
 ;; Si el nombre de alguna variable de la proposición no se encuentra en el ambiente recibido, se arroja un error.
-(define (eval prop env)
-  (match prop
-    [(varp n) (let ([value (assoc n env)]) 
-                (if value
-                    (cdr value)
-                    (error (format "eval: variable ~a is not defined in environment" n))))]
-    [(andp p q) (let ([p-value (eval p env)]
-                      [q-value (eval q env)])
-                  (and p-value q-value))]
-    [(orp p q) (let ([p-value (eval p env)]
-                     [q-value (eval q env)])
-                 (or p-value q-value))]
-    [(notp p) (not (eval p env))]))
-|#
-
+(define (eval-2 prop env)
+  ((fold-prop (λ (n) (let ([value (assoc n env)])
+                       (if value
+                           (cdr value)
+                           (error (format "eval: variable ~a is not defined in environment" n)))))
+              (λ (p q) (let ([p-value p]
+                             [q-value q])
+                         (and p-value q-value)))
+              (λ (p q) (let ([p-value p]
+                             [q-value q])
+                         (or p-value q-value)))
+              (λ (p) (not p)))
+   prop))
 
 
 ;; simplify-negations-2 :: Prop -> Prop
-
-#|
-;; simplify-negations :: Prop -> Prop
 ;; Realiza una pasada de simplificación de negaciones de la proposición recibida eliminando dobles negaciones y aplicando leyes de Morgan.
 ;; Es posible que alguna simplificación genere una nueva negación sin simplificar.
-(define (simplify-negations prop)
-  (match prop
-    [(varp n) (varp n)]
-    [(andp p q) (andp (simplify-negations p) (simplify-negations q))]
-    [(orp p q) (orp (simplify-negations p) (simplify-negations q))]
-    [(notp (notp p)) (simplify-negations p)]
-    [(notp (andp p q)) (orp (notp (simplify-negations p)) (notp (simplify-negations q)))]
-    [(notp (orp p q)) (andp (notp (simplify-negations p)) (notp (simplify-negations q)))]
-    [(notp (varp n)) (notp (varp n))]))
-|#
-
+(define (simplify-negations-2 prop)
+  ((fold-prop varp
+              andp
+              orp
+              (λ (p) (match p
+                       [(varp n) (notp (varp n))]
+                       [(andp q r) (orp (notp q) (notp r))]
+                       [(orp q r) (andp (notp q) (notp r))]
+                       [(notp q) q])))
+   prop))
 
 
 ;; distribute-and-2 :: Prop -> Prop
+;; Distribuye las conjunciónes de la proposición recibida siguiendo las leyes de distribución correspondientes.
+;; Es posible que alguna distribución genere una nueva conjunción sin distribuir.
+
+              
 
 #|
+
+(define (fold-prop varp-f andp-f orp-f notp-f)
+  (λ (prop)
+    (match prop
+      [(varp n) (varp-f n)]
+      [(andp p q) (andp-f ((fold-prop varp-f andp-f orp-f notp-f) p)
+                          ((fold-prop varp-f andp-f orp-f notp-f) q))]                   
+      [(orp p q) (orp-f ((fold-prop varp-f andp-f orp-f notp-f) p)
+                        ((fold-prop varp-f andp-f orp-f notp-f) q))]      
+      [(notp p) (notp-f ((fold-prop varp-f andp-f orp-f notp-f) p))])))
+
+
 ;; distribute-and :: Prop -> Prop
 ;; Distribuye las conjunciónes de la proposición recibida siguiendo las leyes de distribución correspondientes.
 ;; Es posible que alguna distribución genere una nueva conjunción sin distribuir.
@@ -292,3 +299,13 @@
     [(notp p) (notp (distribute-and p))]))
 |#
 
+(define (distribute-and prop)
+  (match prop
+    [(varp n) (varp n)]
+    [(andp p q) (match (cons p q)
+                  [(cons (orp (distribute-and q) (distribute-and r)) (distribute-and s)) (orp (andp (distribute-and q) (distribute-and s)) (andp (distribute-and r) (distribute-and s)))]
+                  [(cons (distribute-and q) (orp (distribute-and r) (distribute-and s))) (orp (andp (distribute-and q) (distribute-and r)) (andp (distribute-and q) (distribute-and s)))]
+                  [(cons q r) (andp ((distribute-and q) (distribute-and r)))])] 
+    [(andp p q) (andp (distribute-and p) (distribute-and q))]
+    [(orp p q) (orp (distribute-and p) (distribute-and q))]
+    [(notp p) (notp (distribute-and p))]))
