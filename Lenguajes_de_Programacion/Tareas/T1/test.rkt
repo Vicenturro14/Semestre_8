@@ -175,3 +175,60 @@
 (test/exn (eval (orp (varp "a") (andp (varp "b") (notp (varp "c")))) (list (cons "a" #t) (cons "c" #t))) "variable b is not defined in environment")
 (test/exn (eval (orp (varp "a") (andp (varp "b") (notp (varp "c")))) (list (cons "a" #t) (cons "b" #t))) "variable c is not defined in environment")
 
+#| Tests P1 f |#
+
+;; Tests multi-env-eval
+(test (multi-env-eval (varp "a") (list (list (cons "a" #t)))) #t)
+(test (multi-env-eval (varp "a") (list (list (cons "a" #f)))) #f)
+(test (multi-env-eval (varp "a") (list (list (cons "a" #t)) (list (cons "a" #f)))) #f)
+(test (multi-env-eval (notp (varp "a")) (list (list (cons "a" #t)))) #f)
+(test (multi-env-eval (notp (varp "a")) (list (list (cons "a" #f)))) #t)
+(test (multi-env-eval (notp (varp "a")) (list (list (cons "a" #t)) (list (cons "a" #f)))) #f)
+(test (multi-env-eval (orp (varp "a") (varp "b")) (list (list (cons "a" #t) (cons "b" #t)))) #t)
+(test (multi-env-eval (orp (varp "a") (varp "b")) (list (list (cons "a" #t) (cons "b" #f)))) #t)
+(test (multi-env-eval (orp (varp "a") (varp "b")) (list (list (cons "a" #f) (cons "b" #t)))) #t)
+(test (multi-env-eval (orp (varp "a") (varp "b")) (list (list (cons "a" #f) (cons "b" #f)))) #f)
+(test (multi-env-eval (orp (varp "a") (varp "b")) (list (list (cons "a" #t) (cons "b" #t))
+                                                        (list (cons "a" #t) (cons "b" #f))
+                                                        (list (cons "a" #f) (cons "b" #t)))) #t)
+(test (multi-env-eval (orp (varp "a") (varp "b")) (list (list (cons "a" #t) (cons "b" #t))
+                                                        (list (cons "a" #t) (cons "b" #f))
+                                                        (list (cons "a" #f) (cons "b" #t))
+                                                        (list (cons "a" #f) (cons "b" #f)))) #f)
+(test (multi-env-eval (andp (varp "a") (varp "b")) (list (list (cons "a" #t) (cons "b" #t))
+                                                         (list (cons "a" #t) (cons "b" #f))
+                                                         (list (cons "a" #f) (cons "b" #t))
+                                                         (list (cons "a" #f) (cons "b" #f)))) #f)
+(test (multi-env-eval (andp (varp "a") (varp "b")) (list (list (cons "a" #t) (cons "b" #t)))) #t)
+
+;; Tests tautology?
+(test (tautology? (varp "a")) #f)
+(test (tautology? (notp (varp "a"))) #f)
+(test (tautology? (orp (varp "a") (varp "b"))) #f)
+(test (tautology? (andp (varp "a") (varp "b"))) #f)
+(test (tautology? (orp (varp "a") (notp (varp "a")))) #t)
+(test (tautology? (orp (varp "a") (notp (varp "b")))) #f)
+(test (tautology? (andp (varp "a") (notp (varp "a")))) #f)
+(test (tautology? (notp (andp (varp "a") (notp (varp "a"))))) #t)
+
+
+#| Tests P2 a |#
+;; Tests simplify-negations
+(test (simplify-negations (varp "a" )) (varp "a"))
+(test (simplify-negations (notp (varp "a"))) (notp (varp "a")))
+(test (simplify-negations (notp (notp (varp "a")))) (varp "a"))
+(test (simplify-negations (notp (andp (varp "a") (varp "b")))) (orp (notp (varp "a")) (notp (varp "b"))))
+(test (simplify-negations (notp (orp (varp "a") (varp "b")))) (andp (notp (varp "a")) (notp (varp "b"))))
+(test (simplify-negations (notp (orp (notp (varp "a")) (varp "b")))) (andp (notp (notp (varp "a"))) (notp (varp "b"))))
+
+
+#| Tests P2 b |#
+;; Tests distribute-and
+(test (distribute-and (varp "a")) (varp "a"))
+(test (distribute-and (notp (varp "a"))) (notp (varp "a")))
+(test (distribute-and (orp (varp "a") (varp "b"))) (orp (varp "a") (varp "b")))
+(test (distribute-and (andp (varp "a") (varp "b"))) (andp (varp "a") (varp "b")))
+(test (distribute-and (andp (orp (varp "a") (varp "b")) (varp "c")))
+      (orp (andp (varp "a") (varp "c")) (andp (varp "b") (varp "c"))))
+(test (distribute-and (andp (varp "c") (orp (varp "a") (varp "b"))))
+      (orp (andp (varp "c") (varp "a")) (andp (varp "c") (varp "b"))))

@@ -97,7 +97,7 @@
 (define (eval prop env)
   (match prop
     [(varp n) (let ([value (assoc n env)]) 
-                (if (value)
+                (if value
                     (cdr value)
                     (error (format "eval: variable ~a is not defined in environment" n))))]
     [(andp p q) (let ([p-value (eval p env)]
@@ -109,10 +109,24 @@
     [(notp p) (not (eval p env))]))
 
 
+
 #| Parte F |#
 
-;; tautology? :: Prop -> Boolean
+;; multi-env-eval :: Prop (Listof (Listof (Pair String Boolean))) -> Boolean
+;; Evalua la proposición recibida en todos los ambientes de la lista recibida.
+;; Retorna #t si el resultado de la evaluación de la proposición es #t en todos los ambientes, en caso contrario retorna #f.
+(define (multi-env-eval prop env-list)
+  (match env-list
+    ['() #t]
+    [(cons env rest) (if (eval prop env)
+                         (multi-env-eval prop rest)
+                         #f)]))
 
+;; tautology? :: Prop -> Boolean
+;; Retorna #t si la proposición recibida es una tautología.
+(define (tautology? prop)
+  (multi-env-eval prop (all-environments (vars prop))))
+  
 
 
 #| P2 |#
@@ -120,10 +134,32 @@
 #| Parte A |#
 
 ;; simplify-negations :: Prop -> Prop
+;; Realiza una pasada de simplificación de negaciones de la proposición recibida eliminando dobles negaciones y aplicando leyes de Morgan.
+;; Es posible que alguna simplificación genere una nueva negación sin simplificar.
+(define (simplify-negations prop)
+  (match prop
+    [(varp n) (varp n)]
+    [(andp p q) (and (simplify-negations p) (simplify-negations q))]
+    [(orp p q) (orp (simplify-negations p) (simplify-negations q))]
+    [(notp (notp p)) (simplify-negations p)]
+    [(notp (andp p q)) (orp (notp (simplify-negations p)) (notp (simplify-negations q)))]
+    [(notp (orp p q)) (andp (notp (simplify-negations p)) (notp (simplify-negations q)))]
+    [(notp (varp n)) (notp (varp n))]))
+
 
 #| Parte B |#
 
 ;; distribute-and :: Prop -> Prop
+;; Distribuye las conjunciónes de la proposición recibida siguiendo las leyes de distribución correspondientes.
+;; Es posible que alguna distribución genere una nueva conjunción sin distribuir.
+(define (distribute-and prop)
+  (match prop
+    [(varp n) (varp n)]
+    [(andp (orp p q) r) (orp (andp (distribute-and p) (distribute-and r)) (andp (distribute-and q) (distribute-and r)))]
+    [(andp p (orp q r)) (orp (andp (distribute-and p) (distribute-and q)) (andp (distribute-and p) (distribute-and r)))]
+    [(andp p q) (andp (distribute-and p) (distribute-and q))]
+    [(orp p q) (orp (distribute-and p) (distribute-and q))]
+    [(notp p) (notp (distribute-and p))]))
 
 #| Parte C |#
 
