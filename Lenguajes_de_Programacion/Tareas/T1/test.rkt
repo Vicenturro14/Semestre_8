@@ -1,6 +1,7 @@
 #lang play
 (require "T1.rkt")
 (print-only-errors #t)
+#| Nombre: Vicente Olivares Gómez |#
 
 #| Tests P1 b |#
 ;; Tests occurrences
@@ -282,9 +283,10 @@
 
 
 #| Tests P3 a |#
-;; Tests fold-prop
+;; fold-prop queda testeado con los tests para occurrences-2, vars-2, eval-2, simplify-negations-2 y distribute-and-2,
+;; ya que las funciones mencionadas son implementadas con fold-prop.s
 
-
+#| Tests P3 b |#
 
 ;; Tests occurrences-2
 (test (occurrences-2 (varp "a") "b") 0)
@@ -368,7 +370,7 @@
 (test (simplify-negations-2 (notp (orp (varp "a") (varp "b")))) (andp (notp (varp "a")) (notp (varp "b"))))
 (test (simplify-negations-2 (notp (orp (notp (varp "a")) (varp "b")))) (andp (notp (notp (varp "a"))) (notp (varp "b"))))
 
-#|
+
 ;; Tests distribute-and-2
 (test (distribute-and-2 (varp "a")) (varp "a"))
 (test (distribute-and-2 (notp (varp "a"))) (notp (varp "a")))
@@ -380,4 +382,3 @@
       (orp (andp (varp "c") (varp "a")) (andp (varp "c") (varp "b"))))
 (test (distribute-and-2 (andp (orp (varp "a") (varp "b")) (orp (varp "c") (varp "d"))))
       (orp (andp (varp "a") (orp (varp "c") (varp "d"))) (andp (varp "b") (orp (varp "c") (varp "d"))))) 
-|#

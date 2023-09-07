@@ -1,5 +1,5 @@
 #lang play
-#| Nombre: Vicente Olivares |#
+#| Nombre: Vicente Olivares Gómez |#
 
 #| P1 |#
 
@@ -147,21 +147,21 @@
                 [(orp q r) (andp (notp (simplify-negations q)) (notp (simplify-negations r)))]
                 [(notp q) (simplify-negations q)])]))
 
+
 #| Parte B |#
 
 ;; distribute-and :: Prop -> Prop
 ;; Distribuye las conjunciónes de la proposición recibida siguiendo las leyes de distribución correspondientes.
 ;; Es posible que alguna distribución genere una nueva conjunción sin distribuir.
-#|
 (define (distribute-and prop)
   (match prop
     [(varp n) (varp n)]
-    [(andp (orp p q) r) (orp (andp (distribute-and p) (distribute-and r)) (andp (distribute-and q) (distribute-and r)))]
-    [(andp p (orp q r)) (orp (andp (distribute-and p) (distribute-and q)) (andp (distribute-and p) (distribute-and r)))]
-    [(andp p q) (andp (distribute-and p) (distribute-and q))]
+    [(andp p q) (match (cons p q)
+                  [(cons (orp r s) t) (orp (andp (distribute-and r) (distribute-and t)) (andp (distribute-and s) (distribute-and t)))]
+                  [(cons r (orp s t)) (orp (andp (distribute-and r) (distribute-and s)) (andp (distribute-and r) (distribute-and t)))]
+                  [(cons r s) (andp (distribute-and r) (distribute-and s))])] 
     [(orp p q) (orp (distribute-and p) (distribute-and q))]
     [(notp p) (notp (distribute-and p))]))
-|#
 
 
 #| Parte C |#
@@ -210,6 +210,7 @@
       [(orp p q) (orp-f ((fold-prop varp-f andp-f orp-f notp-f) p)
                         ((fold-prop varp-f andp-f orp-f notp-f) q))]      
       [(notp p) (notp-f ((fold-prop varp-f andp-f orp-f notp-f) p))])))
+
 
 #| Parte B |#
 
@@ -270,42 +271,13 @@
 ;; distribute-and-2 :: Prop -> Prop
 ;; Distribuye las conjunciónes de la proposición recibida siguiendo las leyes de distribución correspondientes.
 ;; Es posible que alguna distribución genere una nueva conjunción sin distribuir.
-
-              
-
-#|
-
-(define (fold-prop varp-f andp-f orp-f notp-f)
-  (λ (prop)
-    (match prop
-      [(varp n) (varp-f n)]
-      [(andp p q) (andp-f ((fold-prop varp-f andp-f orp-f notp-f) p)
-                          ((fold-prop varp-f andp-f orp-f notp-f) q))]                   
-      [(orp p q) (orp-f ((fold-prop varp-f andp-f orp-f notp-f) p)
-                        ((fold-prop varp-f andp-f orp-f notp-f) q))]      
-      [(notp p) (notp-f ((fold-prop varp-f andp-f orp-f notp-f) p))])))
-
-
-;; distribute-and :: Prop -> Prop
-;; Distribuye las conjunciónes de la proposición recibida siguiendo las leyes de distribución correspondientes.
-;; Es posible que alguna distribución genere una nueva conjunción sin distribuir.
-(define (distribute-and prop)
-  (match prop
-    [(varp n) (varp n)]
-    [(andp (orp p q) r) (orp (andp (distribute-and p) (distribute-and r)) (andp (distribute-and q) (distribute-and r)))]
-    [(andp p (orp q r)) (orp (andp (distribute-and p) (distribute-and q)) (andp (distribute-and p) (distribute-and r)))]
-    [(andp p q) (andp (distribute-and p) (distribute-and q))]
-    [(orp p q) (orp (distribute-and p) (distribute-and q))]
-    [(notp p) (notp (distribute-and p))]))
-|#
-
-(define (distribute-and prop)
-  (match prop
-    [(varp n) (varp n)]
-    [(andp p q) (match (cons p q)
-                  [(cons (orp (distribute-and q) (distribute-and r)) (distribute-and s)) (orp (andp (distribute-and q) (distribute-and s)) (andp (distribute-and r) (distribute-and s)))]
-                  [(cons (distribute-and q) (orp (distribute-and r) (distribute-and s))) (orp (andp (distribute-and q) (distribute-and r)) (andp (distribute-and q) (distribute-and s)))]
-                  [(cons q r) (andp ((distribute-and q) (distribute-and r)))])] 
-    [(andp p q) (andp (distribute-and p) (distribute-and q))]
-    [(orp p q) (orp (distribute-and p) (distribute-and q))]
-    [(notp p) (notp (distribute-and p))]))
+(define (distribute-and-2 prop)
+  ((fold-prop varp
+              (λ (p q) (match (cons p q)
+                         [(cons (orp r s) t) (orp (andp r t) (andp s t))]
+                         [(cons r (orp s t)) (orp (andp r s) (andp r t))]
+                         [(cons r s) (andp r s)]))
+              orp
+              notp)
+   prop))
+             
