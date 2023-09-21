@@ -1,0 +1,84 @@
+<html>
+    <head>
+        <title>Registrar Artesano</title>
+    </head>
+    <body>
+        <div>
+            <h1>Regístrate como Artesano/a</h1>
+            <div id="error_msg_div" hidden>
+                <h2 id="error_msg"></h2>
+                <ul id="error_list"></ul>
+            </div>
+            <form id="register_form" name="register_form" action="" method="post" enctype="multipart/form-data">
+                <div id="region_input">
+                    <label for="region">Región</label>
+                    <select name="region" id="region">
+                        <option value="0">Seleccione una región</option>
+                    </select>
+                </div>
+                <div id="comunne_input">
+                    <label for="comunne">Comuna</label>
+                    <select name="comunne" id="comunne">
+                        <option value="0">Seleccione una comuna</option>
+                    </select>
+                </div>
+                <div id="handicraft_type_input">
+                    <label for="handicraft_type">Tipo de artesanía</label>
+                    <select name="handicraft_type" id="handicraft_type">
+                        <option value="0">Seleccione el tipo de artesanía</option>
+                    </select>
+                </div>
+                <div id="handicraft_description_input">
+                    <label for="handicraft_description">Descripción de artesanía (Opcional)</label>
+                    <textarea name="handicraft_description" id="handicraft_description" cols="50" rows="4" form="register_form"></textarea>
+                </div>
+                <div id="handicraft_image_div">
+                    <div>Foto(s) de artesanía</div>
+                    <div>
+                        <div>
+                            <div id="image_1_div">
+                                <label for="image_1">Foto 1</label>
+                                <input type="file" name="image_1" id="image_1" multiple accept="image/*, .pdf">
+                            </div>
+                            <div id="image_2_div" hidden>
+                                <label for="image_2">Foto 2</label>
+                                <input type="file" name="image_2" id="image_2" multiple accept="image/*, .pdf">
+                            </div>
+                            <div id="image_3_div" hidden>
+                                <label for="image_3">Foto 3</label>
+                                <input type="file" name="image_3" id="image_3" multiple accept="image/*, .pdf">
+                            </div>
+                        </div>
+                        <button type="button" id="add_image_btn">Agregar otra foto</button>
+                    </div>
+                </div>
+                <div id="name_input">
+                    <label for="name">Nombre artesano/a</label>
+                    <input type="text" name="name" id="name" minlength="3" maxlength="80">
+                </div>
+                <div id="email_input">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" name="email" maxlength="30">
+                </div>
+                <div id="phone_input">
+                    <label for="phone">Teléfono celular (Opcional)</label>
+                    <input type="text" name="phone" id="phone" maxlength="15">
+                </div>
+                <div>
+                    <button type="button" id="back_btn">Volver al Inicio</button>
+                    <button type="button" id="register_btn">Registrar Artesano</button>
+                </div>
+            </form>
+        </div>
+        <div id="confirmation_div" hidden>
+            <h2 id="confirmation_msg"></h2>
+            <button type="button" id="confirm_btn">Sí, confirmo</button>
+            <button type="button" id="back_to_form_btn">No, quiero volver al formulario</button>
+        </div>
+        <div id="registration_sended_div" hidden>
+            <h2 id="sended_reg_msg"></h2>
+            <button type="button" id="back_to_index_btn">Volver al Inicio</button>
+        </div>
+        <script src="../js/agregar-artesano.js"></script>
+    </body>
+</html>
