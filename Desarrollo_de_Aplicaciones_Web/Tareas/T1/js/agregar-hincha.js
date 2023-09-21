@@ -98,7 +98,7 @@ const comunnes = {
     "Región de La Araucanía": ["Temuco", "Carahue", "Cunco", "Curarrehue", "Freire", "Galvarino", "Gorbea", "Lautaro", "Loncoche", "Melipeuco", "Nueva Imperial", "Padre las Casas", "Perquenco", "Pitrufquén", "Pucón", "Saavedra", "Teodoro Schmidt", "Toltén", "Vilcún", "Villarrica", "Cholchol", "Angol", "Collipulli", "Curacautín", "Ercilla", "Lonquimay", "Los Sauces", "Lumaco", "Purén", "Renaico", "Traiguén", "Victoria"],
     "Región de Los Ríos": ["Valdivia", "Corral", "Lanco", "Los Lagos", "Máfil", "Mariquina", "Paillaco", "Panguipulli", "La Unión", "Futrono", "Lago Ranco", "Río Bueno"],
     "Región de Los Lagos": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "Frutillar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"],
-    "Región de Aysén": ["Coihaique", "Lago Verde", "Aisén", "Cisnes", "Guaitecas", "Cochrane", "O'Higgins", "Tortel", "Chile Chico", "Río Ibáñez"],
+    "Región de Aysén": ["Coyhaique", "Lago Verde", "Aisén", "Cisnes", "Guaitecas", "Cochrane", "O'Higgins", "Tortel", "Chile Chico", "Río Ibáñez"],
     "Región de Magallanes": ["Punta Arenas", "Laguna Blanca", "Río Verde", "San Gregorio", "Cabo de Hornos (Ex Navarino)", "Antártica", "Porvenir", "Primavera", "Timaukel", "Natales", "Torres del Paine"]
 };
 
@@ -133,7 +133,12 @@ let registration_sended_div = document.getElementById("registration_sended_div")
 let sended_reg_msg = document.getElementById("sended_reg_msg");
 
 // Inserta los elementos del arreglo select_elements como opciones al nodo select select_node
-const fill_select = (select_elements, select_node) => {
+const fill_select = (select_elements, select_node, default_message) => {
+    select_node.textContent = "";
+    let option_0 = document.createElement("option");
+    option_0.value = "0";
+    option_0.innerText = default_message;
+    select_node.append(option_0);
     for (const element of select_elements) {
         let option = document.createElement("option");
         option.value = element;
@@ -147,7 +152,7 @@ const fill_select = (select_elements, select_node) => {
 const fill_comunne = () => {
     let region = regions_select.value;
     if (region != "0") {
-        fill_select(comunnes[region], comunnes_select);
+        fill_select(comunnes[region], comunnes_select, "Seleccione una comuna");
     }
 };
 
@@ -323,11 +328,11 @@ const validate_hincha_form = () => {
 // Llenado de nodos select de deportes
 for (let input = 1; input < 4; input++) {
     let select_node = document.getElementById("sport_" + input);
-    fill_select(sports_array, select_node);
+    fill_select(sports_array, select_node, "Seleccione un deporte");
 }
 
 // Llenado de nodo select de regiones
-fill_select(regions_array, regions_select);
+fill_select(regions_array, regions_select, "Seleccione una región");
 
 // Configuración y funcionamiento de botones
 let sport_num = 1;
