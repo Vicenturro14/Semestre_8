@@ -1,38 +1,43 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
+        <meta charset="UTF-8">
         <title>Registrar Artesano</title>
+        <link rel="stylesheet" type="text/css" href="../css/my_style.css">
     </head>
     <body>
         <div>
-            <h1>Regístrate como Artesano/a</h1>
-            <div id="error_msg_div" hidden>
+            <div class="title">
+                <h1>Regístrate como Artesano/a</h1>
+            </div>
+            <div class="container" id="error_msg_div" hidden>
                 <h2 id="error_msg"></h2>
                 <ul id="error_list"></ul>
             </div>
-            <form id="register_form" name="register_form" action="" method="post" enctype="multipart/form-data">
-                <div id="region_input">
+            <form class="form-container" id="register_form" name="register_form" method="post" enctype="multipart/form-data">
+                <div class="input-container" id="region_input">
                     <label for="region">Región</label>
                     <select name="region" id="region">
                         <option value="0">Seleccione una región</option>
                     </select>
                 </div>
-                <div id="comunne_input">
+                <div id="comunne_input" class="input-container">
                     <label for="comunne">Comuna</label>
                     <select name="comunne" id="comunne">
                         <option value="0">Seleccione una comuna</option>
                     </select>
                 </div>
-                <div id="handicraft_type_input">
+                <div id="handicraft_type_input" class="input-container">
                     <label for="handicraft_type">Tipo de artesanía</label>
                     <select name="handicraft_type" id="handicraft_type">
                         <option value="0">Seleccione el tipo de artesanía</option>
                     </select>
                 </div>
-                <div id="handicraft_description_input">
+                <div id="handicraft_description_input" class="input-container">
                     <label for="handicraft_description">Descripción de artesanía (Opcional)</label>
                     <textarea name="handicraft_description" id="handicraft_description" cols="50" rows="4" form="register_form"></textarea>
                 </div>
-                <div id="handicraft_image_div">
+                <div id="handicraft_image_div" class="input-container">
                     <div>Foto(s) de artesanía</div>
                     <div>
                         <div>
@@ -52,15 +57,15 @@
                         <button type="button" id="add_image_btn">Agregar otra foto</button>
                     </div>
                 </div>
-                <div id="name_input">
+                <div id="name_input" class="input-container">
                     <label for="name">Nombre artesano/a</label>
                     <input type="text" name="name" id="name" minlength="3" maxlength="80">
                 </div>
-                <div id="email_input">
+                <div id="email_input" class="input-container">
                     <label for="email">Correo electrónico</label>
                     <input type="email" id="email" name="email" maxlength="30">
                 </div>
-                <div id="phone_input">
+                <div id="phone_input" class="input-container">
                     <label for="phone">Teléfono celular (Opcional)</label>
                     <input type="text" name="phone" id="phone" maxlength="15">
                 </div>
@@ -70,12 +75,12 @@
                 </div>
             </form>
         </div>
-        <div id="confirmation_div" hidden>
+        <div class="center" id="confirmation_div" hidden>
             <h2 id="confirmation_msg"></h2>
             <button type="button" id="confirm_btn">Sí, confirmo</button>
             <button type="button" id="back_to_form_btn">No, quiero volver al formulario</button>
         </div>
-        <div id="registration_sended_div" hidden>
+        <div class="center" id="registration_sended_div" hidden>
             <h2 id="sended_reg_msg"></h2>
             <button type="button" id="back_to_index_btn">Volver al Inicio</button>
         </div>
