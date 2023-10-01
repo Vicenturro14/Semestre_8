@@ -4,24 +4,49 @@
 ;; PARTE 1A, 1B, 1F
 
 #|
-  Expr ::= ...
+  <Expr> ::= (num <num>)
+           | (add <expr> <expr>)
+           | (sub <expr> <expr>)
+           | (mul <expr> <expr>)
+           | (tt)
+           | (ff)
+           | (leq <expr> <expr>
+           | (ifc <expr> <expr> <expr>)
+           | (id <sym>)
+           | (fun ( 
 |#
+;; Tipo inductivo para representar funciones y expresiones aritméticas y lógicas.
 (deftype Expr
   ;; core
   (num n)
   (add l r)
   (sub l r)
   (mul l r)
+  (tt)
+  (ff)
+  (leq l r)
+  (ifc c t f)
+  (fun ...)
   )
 
-;; parse :: ...
-(define (parse) '???)
+;; parse :: s-expr -> Expr
+;; Convierte s-expr a su equivalente en Expr
+(define (parse s_expr)
+  (match s_expr
+    [n #:when (number? n) (num n)]
+    [(list '+ l r) (add (parse l) (parse r))]
+    [(list '- l r) (sub (parse l) (parse r))]
+    [(list '* l r) (mul (parse l) (parse r))]
+    [#t (tt)]
+    [#f (ff)]
+    [(list '<= l r) (leq (parse l) (parse r))]
+    [(list 'if c t f) (ifc (parse c) (parse t) (parse f))]))
 
 ;; PARTE 1C, 1G
 
-(deftype Val
+;(deftype Val
   ;...
-  )
+ ; )
 
 ;; ambiente de sustitución diferida
 (deftype Env
