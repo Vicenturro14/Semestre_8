@@ -5,20 +5,22 @@
 
 #|
   <Expr> ::= (num <num>)
-           | (add <expr> <expr>)
-           | (sub <expr> <expr>)
-           | (mul <expr> <expr>)
+           | (add <Expr> <Expr>)
+           | (sub <Expr> <Expr>)
+           | (mul <Expr> <Expr>)
            | (tt)
            | (ff)
-           | (leq <expr> <expr>
-           | (ifc <expr> <expr> <expr>)
+           | (leq <Expr> <Expr>
+           | (ifc <Expr> <Expr> <Expr>)
            | (id <sym>)
-           | (fun ( 
+           | (fun [<sym>] <Expr>)
+           | (app <Expr> [<Expr>])
 |#
 ;; Tipo inductivo para representar funciones y expresiones aritméticas y lógicas.
 (deftype Expr
   ;; core
   (num n)
+  (id x)
   (add l r)
   (sub l r)
   (mul l r)
@@ -26,7 +28,8 @@
   (ff)
   (leq l r)
   (ifc c t f)
-  (fun ...)
+  (fun params expr)
+  (app fname args ...)
   )
 
 ;; parse :: s-expr -> Expr
@@ -34,13 +37,18 @@
 (define (parse s_expr)
   (match s_expr
     [n #:when (number? n) (num n)]
+    [x #:when (symbol? x) (id x)]
     [(list '+ l r) (add (parse l) (parse r))]
     [(list '- l r) (sub (parse l) (parse r))]
     [(list '* l r) (mul (parse l) (parse r))]
     [#t (tt)]
     [#f (ff)]
     [(list '<= l r) (leq (parse l) (parse r))]
-    [(list 'if c t f) (ifc (parse c) (parse t) (parse f))]))
+    [(list 'if c t f) (ifc (parse c) (parse t) (parse f))]
+    [(list 'fun params ... expr) (fun params (parse expr))]
+    [(list fname args ...) (app (parse fname) (map parse args))]
+    )
+  )
 
 ;; PARTE 1C, 1G
 
