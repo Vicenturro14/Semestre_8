@@ -16,7 +16,10 @@ En auxiliar hemos hablado sobre cómo el input del usuario puede ser malicioso. 
 
 A pesar de ser una de las vulnerabilidades más recurrentes en aplicaciones web, no es la única donde el input del usuario juega una mala pasada. Otro ejemplo es el llamado **Server Side Template Injection** (SSTI). Investigue y explique brevemente en qué consiste esta vulnerabilidad.
 
-**Respuesta**: Server Side Template Injection (SSTI) es un tipo de injección en la que se saca provecho de templates de HTML que permiten ejecutar código con el objetivo de hacerlos más dinámicos. Las secciones del template en las que se puede ejecutar código tienen marcado su inicio y final con una secuencia que depende del motor de template utilizado. Por ejemplo en el caso de Jinja2 se usan dobles llaves para marcar estas secciones ( {{ *Código* }} ). Las SSTI sacan provecho de estas secuencias y los usuarios maliciosos las incluyen dentro de sus inputs para ejecutar algún código con malas intenciones.
+**Respuesta**: Server Side Template Injection (SSTI) es un tipo de injección en la que se saca provecho de templates de HTML que permiten ejecutar código con el objetivo de hacerlos más dinámicos. Las secciones del template en las que se puede ejecutar código tienen marcado su inicio y final con una secuencia que depende del motor de template utilizado. Por ejemplo en el caso de Jinja2 se usan llaves y signos de porcentaje para marcar estas secciones. Las SSTI sacan provecho de estas secuencias y los usuarios maliciosos las incluyen dentro de sus inputs para ejecutar algún código con malas intenciones.
+
+Fuente:
+https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/07-Input_Validation_Testing/18-Testing_for_Server_Side_Template_Injection
 
 ## Pregunta 2
 
@@ -71,6 +74,29 @@ El objetivo de esta pregunta es que usted rellene los bloques de la template `ru
 **Hint:** para ubicar archivos use la funcion `url_for` de `Jinja`.
 
 **Respuesta:**
+```html
+{% extends 'base.html' %}
+
+{% block title %} Ruta {% endblock %}
+
+{% block css %} 
+  <link rel = "stylesheet" type = "text/css" href = "{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block content %}
+  {% if num %}
+    {% for i in range(num) %}
+      <img src = "{{ url_for('static', filename = 'svg/icon.svg')}}">
+    {% endfor %}
+  {% else %}
+    <p>No se entrego un valor</p>
+  {% endif %}
+{% endblock %}
+
+{% block javascript %}
+  <script src = "{{ url_for('static', filename = 'js/code.js')}}"></script>
+{% endblock %}
+```
 
 
 ## Pregunta 3
@@ -113,4 +139,25 @@ Si cumple todas estas condiciones redireccione al usuario a la ruta `exito`, de 
 
 Reciba el formulario si el método es `POST`, tome el input, escriba y use la función `validar_input` para validar el input.
 
-**Respuesta**: 
+**Respuesta**:
+```python
+def validar_input(input : str):
+  contains_garfield = "garfield" in input
+  has_correct_length = (5 <= len(input) <=30)
+  has_digit = False
+  for c in input:
+    if c.isdigit():
+      has_digit = True
+      break
+  return (not contains_garfield) and has_correct_length and has_digit
+
+@app.route('/pregunta', method=('GET', 'POST'))
+def pregunta():
+  if request.method == "POST":
+    if validar_input(request.form["pregunta"]):
+      return redirect(url_for('exito'))
+    else:
+      return redirect(url_for('malo'))
+  elif request.method == "GET":
+    return render_template('pregunta.html')
+```
