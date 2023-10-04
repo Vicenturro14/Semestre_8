@@ -13,8 +13,7 @@
            | (leq <Expr> <Expr>
            | (ifc <Expr> <Expr> <Expr>)
            | (id <sym>)
-           | (fun [<sym>] <Expr>)
-           | (app <Expr> [<Expr>])
+           | (fun ListOf[<sym>] <Expr>)
 |#
 ;; Tipo inductivo para representar funciones y expresiones aritméticas y lógicas.
 (deftype Expr
@@ -28,8 +27,7 @@
   (ff)
   (leq l r)
   (ifc c t f)
-  (fun params expr)
-  (app fname args ...)
+  (fun params body)
   )
 
 ;; parse :: s-expr -> Expr
@@ -45,8 +43,7 @@
     [#f (ff)]
     [(list '<= l r) (leq (parse l) (parse r))]
     [(list 'if c t f) (ifc (parse c) (parse t) (parse f))]
-    [(list 'fun params ... expr) (fun params (parse expr))]
-    [(list fname args ...) (app (parse fname) (map parse args))]
+    [(list 'fun (list params ...) expr) (fun params (parse expr))]
     )
   )
 
