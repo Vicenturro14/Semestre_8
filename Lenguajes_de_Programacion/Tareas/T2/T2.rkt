@@ -14,8 +14,10 @@
            | (ifc <Expr> <Expr> <Expr>)
            | (id <sym>)
            | (fun ListOf[<sym>] <Expr>)
+           | (app <Expr> ListOf[<Expr>])
 |#
-;; Tipo inductivo para representar funciones y expresiones aritméticas y lógicas.
+;; Tipo inductivo para representar funciones, llamadas a funciones, identificadores
+;; y expresiones aritméticas y lógicas.
 (deftype Expr
   ;; core
   (num n)
@@ -28,10 +30,11 @@
   (leq l r)
   (ifc c t f)
   (fun params body)
+  (app fname args)
   )
 
 ;; parse :: s-expr -> Expr
-;; Convierte s-expr a su equivalente en Expr
+;; Convierte s-expr a su equivalente en Expr.
 (define (parse s_expr)
   (match s_expr
     [n #:when (number? n) (num n)]
@@ -44,8 +47,11 @@
     [(list '<= l r) (leq (parse l) (parse r))]
     [(list 'if c t f) (ifc (parse c) (parse t) (parse f))]
     [(list 'fun (list params ...) expr) (fun params (parse expr))]
+    [(list fname args ...) #:when (symbol? fname) (app (id fname) (map parse args))]
     )
   )
+
+
 
 ;; PARTE 1C, 1G
 
@@ -73,6 +79,8 @@
     [(mtEnv) (error 'env-lookup "free identifier: ~a" x)]
     [(aEnv id val rest) (if (symbol=? id x) val (env-lookup x rest))]))
 
+
+
 ;; PARTE 1D
 
 ;; num2num-op :: ...
@@ -81,10 +89,14 @@
 ;; num2bool-op :: ...
 (define (num2bool-op) '???)
 
+
+
 ;; PARTE 1E, 1G
 
 ;; eval :: ...
 (define (eval) '???)
+
+
 
 ;; PARTE 2A
 
@@ -92,6 +104,8 @@
 (define curry* '???)
 (define uncurry* '???)
 (define partial* '???)
+
+
 
 ;; PARTE 2B
 
