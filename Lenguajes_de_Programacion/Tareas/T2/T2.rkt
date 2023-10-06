@@ -55,9 +55,15 @@
 
 ;; PARTE 1C, 1G
 
-;(deftype Val
-  ;...
- ; )
+#|
+<Val>  ::= (numV <num>)
+         | (closureV <sym> <Expr> <Env>)
+|#
+;; Tipo que representa el valor de las expresiones
+(deftype Val
+  (numV n)
+  (closureV id body env)
+  )
 
 ;; ambiente de sustitución diferida
 (deftype Env

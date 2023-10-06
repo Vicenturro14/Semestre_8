@@ -36,7 +36,10 @@
                 (mul (id 'n) (id 'o))
                 (num 1)))) 
 
+;; parse app tests
 (test (parse '(abc)) (app (id 'abc) (list)))
 (test (parse '(function 1)) (app (id 'function) (list (num 1))))
 (test (parse '(f 3 4 5)) (app (id 'f) (list (num 3) (num 4) (num 5))))
 (test (parse '(foo (+ 0 3) (* 5 0))) (app (id 'foo) (list (add (num 0) (num 3)) (mul (num 5) (num 0)))))
+
+
