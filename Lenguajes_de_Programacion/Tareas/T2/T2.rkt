@@ -5,6 +5,7 @@
 
 #|
   <Expr> ::= (num <num>)
+           | (id <sym>)
            | (add <Expr> <Expr>)
            | (sub <Expr> <Expr>)
            | (mul <Expr> <Expr>)
@@ -12,7 +13,6 @@
            | (ff)
            | (leq <Expr> <Expr>
            | (ifc <Expr> <Expr> <Expr>)
-           | (id <sym>)
            | (fun ListOf[<sym>] <Expr>)
            | (app <Expr> ListOf[<Expr>])
 |#
@@ -57,12 +57,14 @@
 
 #|
 <Val>  ::= (numV <num>)
-         | (closureV <sym> <Expr> <Env>)
+         | (boolV <Boolean>)
+         | (closureV ListOf[<sym>] <Expr> <Env>)
 |#
 ;; Tipo que representa el valor de las expresiones
 (deftype Val
   (numV n)
-  (closureV id body env)
+  (boolV b)
+  (closureV params body env)
   )
 
 ;; ambiente de sustitución diferida
@@ -89,18 +91,64 @@
 
 ;; PARTE 1D
 
-;; num2num-op :: ...
-(define (num2num-op) '???)
+;; num2num-op :: (Number Number -> Number) -> (Val Val -> Val)
+;; Recibe una función que opera sobre dos números resultando un número,
+;; y retorna la función equivalente a la función recibida pero que opera y retorna elementos de tipo Val. 
+(define (num2num-op num_f)
+  (λ (v1 v2)
+    (if (and (numV? v1) (numV? v2))
+        (numV (num_f (numV-n v1) (numV-n v2)))
+        (error "num-op: invalid operands"))))
 
-;; num2bool-op :: ...
-(define (num2bool-op) '???)
+;; num+ :: Val Val -> Val
+;; Retorna la suma de los valores recibidos.
+(define num+ (num2num-op +))
+
+;; num- :: Val Val -> Val
+;; Retorna la resta de los valores recibidos.
+(define num- (num2num-op -))
+
+;; num* :: Val Val -> Val
+;; Retorna el producto de los valores recibidos.
+(define num* (num2num-op *))
+
+
+;; num2bool-op :: (Number Number -> Boolean) -> (Val Val -> Val)
+;; Retorna la función equivalente al predicado recibido pero esta opera y retorna elementos de tipo Val.
+(define (num2bool-op num_f)
+  (λ (v1 v2)
+    (if (and (numV? v1) (numV? v2))
+        (boolV (num_f (numV-n v1) (numV-n v2)))
+        (error "num-op: invalid operands"))))
+
+;; num<= :: Val Val -> Val
+;; Retorna un boolV indicando si el primer elemento tipo Val recibido
+;; es menor o igual al segundo elemento tipo Val recibido.
+(define num<= (num2bool-op <=))
 
 
 
 ;; PARTE 1E, 1G
 
-;; eval :: ...
-(define (eval) '???)
+;; eval :: Expr Env -> Val
+;; Evalua la expresión recibida con el entorno recibido.
+(define (eval expr env)
+  (match expr
+    [(num n) (numV n)]
+    [(id x) (env-lookup x env)]
+    [(add l r) (num+ (eval l env) (eval r env))]
+    [(sub l r) (num- (eval l env) (eval r env))]
+    [(mul l r) (num* (eval l env) (eval r env))]
+    [(tt) (boolV #t)]
+    [(ff) (boolV #f)]
+    [(leq l r) (num<= (eval l env) (eval r env))]
+    [(ifc c t f) (if (boolV-b (eval c env))
+                     (eval t env)
+                     (eval f env))]
+    [(fun params body) (closureV params body env)]
+    [(app fname fargs)
+     ;; Usar foldl con extender env
+  )
 
 
 
