@@ -20,11 +20,13 @@
 (test (parse '(<= (* 3 2) (+ 2 1))) (leq (mul (num 3) (num 2)) (add (num 2) (num 1))))
 (test (parse '(if (<= 4 1) (+ 22 1) (- 32 5))) (ifc (leq (num 4) (num 1)) (add (num 22) (num 1)) (sub (num 32) (num 5))))
 
+
 #| Tests Parte 1B |#
-;; parse id test
+;; parse tests
+;; id
 (test (parse 'a) (id 'a))
 
-;; parse fun tests
+;; fun
 (test (parse '(fun () 1)) (fun (list) (num 1)))
 (test (parse '(fun (x) x)) (fun (list 'x) (id 'x)))
 (test (parse '(fun (y) 2)) (fun (list 'y) (num 2)))
@@ -36,11 +38,12 @@
                 (mul (id 'n) (id 'o))
                 (num 1)))) 
 
-;; parse app tests
+;; app
 (test (parse '(abc)) (app (id 'abc) (list)))
 (test (parse '(function 1)) (app (id 'function) (list (num 1))))
 (test (parse '(f 3 4 5)) (app (id 'f) (list (num 3) (num 4) (num 5))))
 (test (parse '(foo (+ 0 3) (* 5 0))) (app (id 'foo) (list (add (num 0) (num 3)) (mul (num 5) (num 0)))))
+
 
 #| Tests Parte 1D |#
 ;; num2num-op
@@ -82,6 +85,11 @@
 
 
 #| Tests Parte 1E |#
+;; multi-extend-env tests
+(test (multi-extend-env (list) (list) (mtEnv)) (mtEnv))
+(test (multi-extend-env (list 'a) (list (numV 1)) (mtEnv)) (aEnv 'a (numV 1) (mtEnv)))
+(test (multi-extend-env (list 'b 'c) (list (boolV #t) (boolV #f)) (mtEnv))
+      (aEnv 'c (boolV #f) (aEnv 'b (boolV #t) (mtEnv))))
 
 ;; eval tests
 ;; num
@@ -115,12 +123,54 @@
       (numV 4))
 (test (eval (parse '(if (<= 2 0) (* 8 5) (- 2 4))) (mtEnv)) (numV -2))
 ;; fun
-(test (eval (parse '(fun () (ff))) (mtEnv)) (closureV (list) (ff) (mtEnv)))
+(test (eval (parse '(fun () #f)) (mtEnv)) (closureV (list) (ff) (mtEnv)))
 (test (eval (parse '(fun (x) (* a x))) (aEnv 'a (numV 3) (mtEnv)))
       (closureV (list 'x) (parse '(* a x)) (aEnv 'a (numV 3) (mtEnv))))
 (test (eval (parse '(fun (p q r) (+ (- t p) (*q r)))) (aEnv 't (numV 5) (mtEnv)))
       (closureV (list 'p 'q 'r) (parse '(+ (- t p) (*q r))) (aEnv 't (numV 5) (mtEnv))))
 ;; app
-(test (eval (parse '
+(test (eval (parse '(sum 1 2)) (aEnv 'sum (closureV (list 'x 'y) (add (id 'x) (id 'y)) (mtEnv)) (mtEnv)))
+      (numV 3))
+(test (eval (parse '(has_static_scope)) (aEnv 'has_static_scope (closureV (list) (id 'a) (aEnv 'a (boolV #t) (mtEnv)))
+                                              (aEnv 'a (boolV #f) (mtEnv))))
+      (boolV #t))
+(test (eval (parse '(sqr i)) (aEnv 'sqr (closureV (list 'x) (mul (id 'x) (id 'x)) (mtEnv))
+                                   (aEnv 'i (numV 12) (mtEnv))))
+      (numV 144))
 
 
+#| Tests Parte 1F |#
+;; parse tests
+;; tuple
+(test (parse '(tuple)) (tupl (list)))
+(test (parse '(tuple 1)) (tupl (list (num 1))))
+(test (parse '(tuple 1 a 2 b)) (tupl (list (num 1) (id 'a) (num 2) (id 'b))))
+(test (parse '(tuple (+ 7 x))) (tupl (list (add (num 7) (id 'x)))))
+;; proj
+(test (parse '(proj (tuple 1 2) 0)) (proj (tupl (list (num 1) (num 2))) (num 0)))
+(test (parse '(proj (tuple 4) i)) (proj (tupl (list (num 4))) (id 'i)))
+(test (parse '(proj (tuple 1 1 1) (+ 1 1))) (proj (tupl (list (num 1) (num 1) (num 1))) (add (num 1) (num 1))))
+
+
+#| Tests Parte 1G |#
+;; eval tests
+;; tuple
+(test (eval (parse '(tuple)) (mtEnv)) (tupleV (list)))
+(test (eval (parse '(tuple 1 #t 3)) (mtEnv)) (tupleV (list (numV 1) (boolV #t) (numV 3))))
+(test (eval (parse '(tuple x y)) (aEnv 'x (numV 0) (aEnv 'y (boolV #f) (mtEnv)))) (tupleV (list (numV 0) (boolV #f))))
+(test (eval (parse '(tuple (+ 1 2))) (mtEnv)) (tupleV (list (numV 3))))
+(test (eval (parse '(tuple (verdad))) (aEnv 'verdad (closureV (list) (tt) (mtEnv)) (mtEnv))) (tupleV (list (boolV #t))))
+;; proj
+(test (eval (parse '(proj (tuple 1 2) 0)) (mtEnv)) (numV 1))
+(test (eval (parse '(proj (tuple (+ 1 2) (+ 3 4)) 0)) (mtEnv)) (numV 3))
+(test (eval (parse '(proj (tuple 4 5 6) (+ 1 1))) (mtEnv)) (numV 6))
+(test (eval (parse '(proj (tuple 10 20 30) i)) (aEnv 'i (numV 1) (mtEnv))) (numV 20))
+(test (eval (parse '(proj (tuple 123 456 789) (sqr 1))) (aEnv 'sqr (closureV (list 'x) (mul (id 'x) (id 'x)) (mtEnv)) (mtEnv))) (numV 456))
+
+
+
+#| Tests Parte 2 |#
+;; inject-functions tests
+(define id* (closureV (list 'x) (parse 'x) empty-env))
+(test (inject-functions '() empty-env) (empty-env))
+(test (inject-functions (list (cons 'id id*) (cons 'swap swap*)) empty-env) (aEnv 'swap swap* (aEnv 'id id* empty-env)))

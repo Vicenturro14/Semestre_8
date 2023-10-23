@@ -1,0 +1,46 @@
+.title {
+    text-align: center;
+}
+
+.center {
+    text-align: center;
+}
+
+.container {
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    border-radius: 10px;
+    margin: 3% auto;
+    width: 250px;
+    height: 300px;
+    text-align: center;
+}
+.right {
+    position: absolute;
+    right: 30%;
+}
+
+.left {
+    position: absolute;
+    left: 30%;
+}
+
+.big-container {
+    display: flex;
+    width: 75%;
+}
+
+.form-container {
+    width: 600px;
+    height: 600px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    border-radius: 10px;
+    text-align: center;
+    margin: auto;
+}
+.input-container {
+    margin: 3%;
+}

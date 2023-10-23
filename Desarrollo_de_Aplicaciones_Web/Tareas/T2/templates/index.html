@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %} Juegos Paramericanos Santiago 2023 {% endblock %}
+{% block content %}
+    <div>
+        <div class="title">
+            <h1>¡Te damos la bienvenida a los Juegos Panamericanos Chile 2023!</h1>
+        </div>
+        <div class="big-container">
+            <div class="container left">
+                <h2>Para Hinchas</h2>
+                <a href="{{ url_for('static', filename='html/agregar-hincha.html') }}">Registrar Hincha</a>
+                <br>
+                <a href="{{ url_for('static', filename='html/ver-hinchas.html') }}">Ver listado de hinchas</a>            
+            </div>
+            <div class="container right">
+                <h2>Para Artesanos</h2>
+                <a href="{{ url_for('agregar_artesano') }}">Registrar Artesano</a>
+                <br>
+                <a href="{{ url_for('ver_artesanos')}}">Ver listado de artesanos</a>            
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}{% endblock %}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Registrar Hincha</title>
+        <link rel="stylesheet" type="text/css" href="../css/my_style.css">
+    </head>
+    <body>
+        <div>
+            <div class="title">
+                <h1>Regístrate como hincha</h1>
+            </div>
+            <div class="container" id="msg_div" hidden>
+                <h2 id="msg"></h2>
+                <ul id="msg_list"></ul>
+            </div>
+            <form class="form-container" name="register_form" id="register_form" method="post">
+                <div id="sport_container" class="input-container">
+                    <div>Deporte(s) a apoyar</div>
+                    <div>
+                        <div>
+                            <div id="sport_1_div">
+                                <label for="sport_1">Deporte 1</label>
+                                <select name="sport_1" id="sport_1" form="register_form">
+                                    <option value="0">Seleccione un deporte</option>
+                                </select>
+                            </div>
+                            <div id="sport_2_div" hidden>
+                                <label for="sport_2">Deporte 2</label>
+                                <select name="sport_2" id="sport_2" form="register_form">
+                                    <option value="0">Seleccione un deporte</option>
+                                </select>
+                            </div>
+                            <div id="sport_3_div" hidden>
+                                <label for="sport_3">Deporte 3</label>
+                                <select name="sport_3" id="sport_3" form="register_form">
+                                    <option value="0">Seleccione un deporte</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" id="add_sport_btn">Agregar otro deporte</button>
+                    </div>
+                </div>
+                <div id="region_input" class="input-container">
+                    <label for="region">Región</label>
+                    <select name="region" id="region">
+                        <option value="0">Seleccione una región</option>
+                    </select>
+                </div>
+                <div id="comunne_input" class="input-container">
+                    <label for="comunne">Comuna</label>
+                    <select name="comunne" id="comunne">
+                        <option value="0">Seleccione una comuna</option>
+                    </select>
+                </div>
+                <div id="transport_input" class="input-container">
+                    <div>Medio de transporte</div>
+                    <div id="transport_radio">
+                        <div>
+                            <input type="radio" name="transport" id="public_transport" value="public">
+                            <label for="public_transport">Locomoción pública</label>
+                        </div>
+                        <div>
+                            <input type="radio" name="transport" id="private_transport" value="private">
+                            <label for="private_transport">Particular</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="name_input" class="input-container">
+                    <label for="name">Nombre</label>
+                    <input type="text" name="name" id="name" minlength="3" maxlength="80">
+                </div>
+                <div id="email_input" class="input-container">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" name="email" maxlength="30">
+                </div>
+                <div id="phone_input" class="input-container">
+                    <label for="phone">Teléfono celular (Opcional)</label>
+                    <input type="text" name="phone" id="phone" maxlength="15">
+                </div>
+                <div id="comments_input" class="input-container">
+                    <label for="comment">Comentarios (Opcional)</label>
+                    <input type="text" name="comment" id="comment" maxlength="80">
+                </div>
+                <div>
+                    <button type="button" id="back_btn">Volver al Inicio</button>
+                    <button type="button" id="register_btn">Registrar Hincha</button>
+                </div>
+            </form>
+        </div>
+        <div class="center" id="confirmation_div" hidden>
+            <h2 id="confirmation_msg"></h2>
+            <button type="button" id="confirm_btn">Sí, confirmo</button>
+            <button type="button" id="back_to_form_btn">No, quiero volver al formulario</button>
+        </div>
+        <div class="center" id="registration_sended_div" hidden>
+            <h2 id="sended_reg_msg"></h2>
+            <button type="button" id="back_to_index_btn">Volver al Inicio</button>
+        </div>
+        <script src="../js/agregar-hincha.js"></script>
+    </body>
+</html>
