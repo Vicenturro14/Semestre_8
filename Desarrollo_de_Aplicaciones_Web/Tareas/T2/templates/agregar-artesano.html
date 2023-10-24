@@ -1,10 +1,19 @@
 {% extends 'base.html' %}
-{% block title %} Registrat Artesano {% endblock %}
+{% block title %} Registrar Artesano {% endblock %}
 {% block content %}
     <div>
     <div class="title">
         <h1>Regístrate como Artesano/a</h1>
     </div>
+    {% if errors %}
+        <div>
+            <ul>
+                {% for error in errors %}
+                    <li> {{error}} </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
     <div class="container" id="error_msg_div" hidden>
         <h2 id="error_msg"></h2>
         <ul id="error_list"></ul>

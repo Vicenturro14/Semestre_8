@@ -1,5 +1,5 @@
 import re
-from ..database import db
+from database import db
 import filetype
 
 def validate_region_comunne(region, comunne):
@@ -25,7 +25,8 @@ def validate_handicraft_types(handicraft_type_1, handicraft_type_2, handicraft_t
         handicraft_types.append(handicraft_type_3)
 
     for handicraft_type in handicraft_types:
-        if db.get_handicraft_type(handicraft_type.lower()) is None:
+        handicraft_type_tuple = db.get_handicraft_type(handicraft_type.lower())
+        if handicraft_type_tuple is None:
             return False, "Al menos uno de los tipos de artesanía ingresados no es válido."
     return True, None
             
@@ -40,7 +41,7 @@ def validate_name(name):
 def validate_email(email):
     if email is None:
         return False, "Es necesario ingresar un correo electrónico."
-    valid_email = bool(re.search(r"^[\w.-]+@([\w-]+\.)+[\w]{2,3}$"))
+    valid_email = bool(re.search(r"^[\w.-]+@([\w-]+\.)+[\w]{2,3}$", email))
     if not valid_email:
         return valid_email, "El correo no tiene formato de correo electrónico."
     return True, None
@@ -49,7 +50,7 @@ def validate_phone(phone) -> tuple:
     """Retorna una tupla con un booleano indicando si el número de teléfono es válido y un mensaje de error.
     Se toma como válido no recibir número de teléfono."""
     error_msg = None
-    if phone is None:
+    if phone is None or phone == "":
         valid_phone = True
     else:
         valid_phone = bool(re.search(r"^\+56\s?9\s?[0-9]{4}\s?[0-9]{4}$", phone))
@@ -78,7 +79,7 @@ def validate_images(image_1, image_2, image_3):
             return False, "Una de las imágenes tiene una extensión no permitida."
         if ftype.mime not in ALLOWED_MIMETYPES:
             return False, "Una de las imágenes no es del tipo permitido."
-    
+    return True, None
 
 
 def validate_form(form_dict, image_1, image_2, image_3) -> bool:
@@ -104,7 +105,7 @@ def validate_form(form_dict, image_1, image_2, image_3) -> bool:
         error_messages.append(name_msg)
 
     # Validación de email
-    valid_email, email_msg = validate_email(form_dict.get("emaili"))
+    valid_email, email_msg = validate_email(form_dict.get("email"))
     if not valid_email:
         is_valid = False
         error_messages.append(email_msg)
@@ -115,14 +116,10 @@ def validate_form(form_dict, image_1, image_2, image_3) -> bool:
         is_valid = False
         error_messages.append(phone_msg)
 
+    # Validación de imágenes 
+    valid_images, images_msg = validate_images(image_1, image_2, image_3)
+    if not valid_images:
+        is_valid = False
+        error_messages.append(images_msg)
 
     return is_valid, error_messages
-
-
-
-#         image_1 = request.form.get("image_1")
-#         image_2 = request.form.get("image_2")
-#         image_3 = request.form.get("image_3")
-
-
-print(validate_phone(None))
