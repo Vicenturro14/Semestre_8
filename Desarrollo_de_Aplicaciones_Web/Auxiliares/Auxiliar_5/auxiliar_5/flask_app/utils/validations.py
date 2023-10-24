@@ -44,7 +44,7 @@ def validate_conf_img(conf_img):
         return False
     # check mimetype
     if ftype_guess.mime not in ALLOWED_MIMETYPES:
-        return False
+        return False, 
     return True
 
 

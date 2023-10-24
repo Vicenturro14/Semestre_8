@@ -57,6 +57,28 @@ def validate_phone(phone) -> tuple:
             error_msg = "El número de teléfono debe ser de la forma +56 9 1234 5678"
     return valid_phone, error_msg
 
+def validate_images(image_1, image_2, image_3):
+    ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+    ALLOWED_MIMETYPES = {"image/jpeg", "image/png", "image/gif"}
+    
+    if image_1 is None and image_2 is None and image_3 is None:
+        return False, "Es necesario subir al menos una imagen."
+    images = []
+    
+    if image_1.filename != "":
+        images.append(image_1)
+    if image_2.filename != "":
+        images.append(image_2)
+    if image_3.filename != "":
+        images.append(image_3)
+
+    for image in images:
+        ftype = filetype.guess(image)
+        if ftype.extension not in ALLOWED_EXTENSIONS:
+            return False, "Una de las imágenes tiene una extensión no permitida."
+        if ftype.mime not in ALLOWED_MIMETYPES:
+            return False, "Una de las imágenes no es del tipo permitido."
+    
 
 
 def validate_form(form_dict, image_1, image_2, image_3) -> bool:
