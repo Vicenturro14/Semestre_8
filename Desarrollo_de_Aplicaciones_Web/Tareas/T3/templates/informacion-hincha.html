@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %} Ficha de Hincha {% endblock %}
+{% block content %}
+    <div class="title">
+        <h1>Ficha de Hincha</h1>
+    </div>
+    <div>
+        <div>
+            <div>
+                <div>Nombre</div>
+                <div>Dylan Riquelme</div>
+            </div>
+            <div>
+                <div>Región</div>
+                <div>Región Metropolitana</div>
+            </div>
+            <div>
+                <div>Comuna</div>
+                <div>Vitacura</div>
+            </div>
+            <div>
+                <div>Deportes</div>
+                <div>Marcha</div>
+            </div>
+            <div>
+                <div>Modo de transporte</div>
+                <div>Locomoción Pública</div>
+            </div>
+            <div>
+                <div>Correo electrónico</div>
+                <div>dylan_riquelme@hola.correo.cl</div>
+            </div>
+            <div>
+                <div>Número de celular</div>
+                <div>+56 9 1234 5678</div>
+            </div>
+            <div>
+                <div>Comentarios</div>
+                <div>-</div>
+            </div>
+        </div>
+        <button type="button" id="back_to_list_btn">Volver al listado</button>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/informacion-hincha.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %} Listado de hinchas {% endblock %}
+{% block content %}
+    <div class="title">
+        <h1>Listado de hinchas registradas y registrados</h1>
+    </div>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Comuna</th>
+                    <th>Deportes</th>
+                    <th>Modo de transporte</th>
+                    <th>Número celular</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <a href="./informacion-hincha.html">Dylan Riquelme</a>
+                    </td>
+                    <td>Vitacura</td>
+                    <td>
+                        Marcha
+                    </td>
+                    <td>Locomoción Pública</td>
+                    <td>+56 9 1234 5678</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="./informacion-hincha.html">Lucas Carrasco</a>
+                    </td>
+                    <td>Treguaco</td>
+                    <td>
+                        Boxeo <br>
+                        Esgrima
+                    </td>
+                    <td>Particular</td>
+                    <td>No especificado</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="./informacion-hincha.html">Javiera Mas</a>
+                    </td>
+                    <td>Coyhaique</td>
+                    <td>
+                        Golf
+                    </td>
+                    <td>Locomoción Pública</td>
+                    <td>+56 9 1122 3344</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="./informacion-hincha.html">Josefina Labarca</a>
+                    </td>
+                    <td>Puerto Varas</td>
+                    <td>
+                        Patinaje artístico <br>
+                        Patinaje velocidad <br>
+                        Tiro con arco
+                    </td>
+                    <td>Particular</td>
+                    <td>+56 9 7485 5870</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="./informacion-hincha.html">Javiera Labrín</a>
+                    </td>
+                    <td>Rinconada</td>
+                    <td>
+                        Natación
+                    </td>
+                    <td>Locomoción Pública</td>
+                    <td>No especificado</td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" id="go_to_index_btn">Volver al Inicio</button>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/listado.js')}}"></script>
+{% endblock %}

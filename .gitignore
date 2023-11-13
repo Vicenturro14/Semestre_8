@@ -4,3 +4,6 @@
 # Racket/DrRacket
 *.bak
 Lenguajes_de_Programacion/**/compiled/
+
+# Python 
+__pycache__
