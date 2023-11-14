@@ -2,6 +2,7 @@ import re
 from database import db
 import filetype
 
+
 def validate_region_comunne(region: str | None, comunne: str | None) -> tuple[bool, str | None]:
     """Valida la comuna y la región recibidas, 
     comprobando que ambas existan y que la comuna se encuentre dentro de la región."""
@@ -127,7 +128,7 @@ def validate_images(image_1, image_2, image_3) -> tuple[bool, str | None]:
     
     return True, None
 
-def validate_form(form_dict : dict, image_1, image_2, image_3) -> tuple[bool, list[str]]:
+def validate_artisan_form(form_dict : dict, image_1, image_2, image_3) -> tuple[bool, list[str]]:
     """Retorna un booleano indicando si el formulario y las imágenes recibidas son válidas, 
     junto a los mensajes de error de aquellos campos que no son válidos."""
     is_valid = True
@@ -168,5 +169,75 @@ def validate_form(form_dict : dict, image_1, image_2, image_3) -> tuple[bool, li
     if not valid_images:
         is_valid = False
         error_messages.append(images_msg)
+
+    return is_valid, error_messages
+
+def validate_sports(sports_list: list[str]) -> tuple[bool, str | None]:
+    # Se revisa que se haya recibido al menos un deporte.
+    sport_bool = False
+    for sport in sports_list:
+        if sport is not None and sport != "0":
+            sport_bool = True
+    if not sport_bool:
+        return False, "Es necesario elegir al menos un deporte."
+    
+
+    # Se filtran las entradas vacías.
+    sports = [sport for sport in sports_list if (sport is not None and sport != "0")]
+    for sport in sports:
+        sport_tuple = db.get_sport(sport)
+        if sport_tuple is None:
+            return False, "Al menos uno de los deportes ingresados no es válido."
+    
+    return True, None
+
+def validate_transport(transport : str | None):
+    if transport is None:
+        return False, "Se debe seleccionar un medio de transporte."
+    
+    if transport.lower() in ["particular", "locomoción pública"]:
+        return True, None
+    
+    return False, "Se debe seleccionar una opción válida."
+
+def validate_supporter_form(form_dict : dict) -> tuple[bool, list[str]]:
+    """Retorna un booleano indicando si el formularion de hincha es válido o no,
+    junto a una lista con los mensajes de error de los campos que no son válidos."""
+
+    is_valid = True
+    error_messages = []
+
+    # Validación de deportes
+    sport_1 = form_dict.get("sport_1")
+    sport_2 = form_dict.get("sport_2")
+    sport_3 = form_dict.get("sport_3")
+    valid_sports, sports_msg = validate_sports([sport_1, sport_2, sport_3])
+    if not valid_sports:
+        error_messages.append(sports_msg)
+
+    # Validación de comuna y región
+    valid_comunne_region, comunne_region_msg = validate_region_comunne(form_dict.get("region"), form_dict.get("comunne"))
+    if not valid_comunne_region:
+        error_messages.append(comunne_region_msg)
+
+    # Validación de medio de transporte
+    valid_transport, transport_msg = validate_transport(form_dict.get("transport"))
+    if not valid_transport:
+        error_messages.append(transport_msg)
+
+    # Validación de nombre
+    valid_name, name_msg = validate_name(form_dict.get("name"))
+    if not valid_name:
+        error_messages.append(name_msg)
+
+    # Validación de email
+    valid_email, email_msg = validate_email(form_dict.get("email"))
+    if not valid_email:
+        error_messages.append(email_msg)
+
+    # Validación de telefono
+    valid_phone, phone_msg = validate_phone(form_dict.get("phone"))
+    if not valid_phone:
+        error_messages.append(phone_msg)
 
     return is_valid, error_messages

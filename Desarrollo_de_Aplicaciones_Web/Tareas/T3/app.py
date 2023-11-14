@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, redirect, url_for
-from utilities.validations import validate_form
+from utilities.validations import validate_artisan_form, validate_supporter_form
 from database import db
 from werkzeug.utils import secure_filename
 import hashlib
@@ -90,7 +90,16 @@ def informacion_artesano():
 def agregar_hincha():
     if request.method == "GET":
         return render_template("agregar-hincha.html")
-# TODO: Agregar POST    
+    
+    # if request.method == "POST"
+    else:
+        valid_form, error_messages = validate_supporter_form(request.form)
+        if not valid_form:
+            return render_template("agregar-hincha.html", errors = error_messages)
+
+@app.route("/ver_hinchas")
+def ver_hincha():
+    return render_template("ver-hinchas.html")
 
 
 if __name__ == "__main__":
