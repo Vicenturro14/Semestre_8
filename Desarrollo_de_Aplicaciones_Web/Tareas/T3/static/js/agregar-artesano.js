@@ -298,18 +298,13 @@ const add_handicraft_input = () => {
     }
 }
 
-// Permite volver al menu de la página
-const go_back = () => {
-    window.location.href = "../../";
-};
-
 const back_to_form = () => {
     confirmation_div.hidden = true;
     register_form.hidden = false;
 }
 
 const confirm_registration = () => {
-    register_form.submit()
+    register_form.submit();
 }
 regions_select.addEventListener("change", fill_comunne);
 add_image_btn.addEventListener("click", add_image_input);

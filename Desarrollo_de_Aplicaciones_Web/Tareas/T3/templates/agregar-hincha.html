@@ -5,11 +5,21 @@
         <div class="title">
             <h1>Regístrate como hincha</h1>
         </div>
-        <div class="container" id="msg_div" hidden>
+        {% if errors %}
+            <div class="red box">
+                <h2>Ha ocurrido un error</h2>
+                <ul class="list">
+                    {% for error in errors %}
+                        <li> {{error}} </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <div class="red box" id="msg_div" hidden>
             <h2 id="msg"></h2>
             <ul id="msg_list"></ul>
         </div>
-        <form class="form-container" name="register_form" id="register_form" method="post">
+        <form class="box" name="register_form" id="register_form" method="post">
             <div id="sport_container" class="input-container">
                 <div>Deporte(s) a apoyar</div>
                 <div>
@@ -87,10 +97,6 @@
         <h2 id="confirmation_msg"></h2>
         <button type="button" id="confirm_btn">Sí, confirmo</button>
         <button type="button" id="back_to_form_btn">No, quiero volver al formulario</button>
-    </div>
-    <div class="center" id="registration_sended_div" hidden>
-        <h2 id="sended_reg_msg"></h2>
-        <button type="button" id="back_to_index_btn">Volver al Inicio</button>
     </div>
 {% endblock %}
 {% block javascript %}

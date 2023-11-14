@@ -6,8 +6,9 @@
         <h1>Regístrate como Artesano/a</h1>
     </div>
     {% if errors %}
-        <div class="list red box">
-            <ul>
+        <div class="red box">
+            <h2>Ha ocurrido un error</h2>
+            <ul class="list">
                 {% for error in errors %}
                     <li> {{error}} </li>
                 {% endfor %}
@@ -19,7 +20,7 @@
         <ul id="error_list" class="list"></ul>
     </div>
     <form class="box" id="register_form" name="register_form" method="post" enctype="multipart/form-data">
-        <div id="region_input">
+        <div id="region_input" class="input-container">
             <label for="region">Región</label>
             <select name="region" id="region">
                 <option value="0">Seleccione una región</option>
@@ -98,9 +99,9 @@
     </form>
     </div>
     <div class="center" id="confirmation_div" hidden>
-    <h2 id="confirmation_msg"></h2>
-    <button type="button" id="confirm_btn">Sí, confirmo</button>
-    <button type="button" id="back_to_form_btn">No, quiero volver al formulario</button>
+        <h2 id="confirmation_msg"></h2>
+        <button type="button" id="confirm_btn">Sí, confirmo</button>
+        <button type="button" id="back_to_form_btn">No, quiero volver al formulario</button>
     </div>
 {% endblock %}
 {% block javascript %}

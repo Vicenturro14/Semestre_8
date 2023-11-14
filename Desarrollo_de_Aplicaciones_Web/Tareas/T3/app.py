@@ -17,10 +17,14 @@ def index(code):
     messages = [None, "El artesano se ha registrado con éxito", "El hincha se ha registrado con éxito"]
     return render_template("index.html", message = messages[code])
 
-
+# Artesanos
 @app.route("/agregar_artesano", methods = ["GET", "POST"])
 def agregar_artesano():
-    if request.method == "POST":
+    if request.method == "GET":
+        return render_template("agregar-artesano.html")
+    
+    # request.method == "POST"
+    else:
         image_1 = request.files.get("image_1")
         image_2 = request.files.get("image_2")
         image_3 = request.files.get("image_3")
@@ -71,17 +75,22 @@ def agregar_artesano():
             # Se guarda imagen en base de datos
             db.create_image(image_path, image_file_name, handicrafter_id)
         return redirect(url_for("index", code= 1))
-    else:
-        return render_template("agregar-artesano.html")
 
 
-@app.route("/ver_artesanos", methods = ["GET"])
+@app.route("/ver_artesanos")
 def ver_artesanos():
     return render_template("ver-artesanos.html")
 
-@app.route("/informacion_artesano", methods = ["GET"])
+@app.route("/informacion_artesano")
 def informacion_artesano():
     return render_template("informacion-artesano.html")
+
+# Hinchas
+@app.route("/agregar_hincha", methods=["GET", "POST"])
+def agregar_hincha():
+    if request.method == "GET":
+        return render_template("agregar-hincha.html")
+# TODO: Agregar POST    
 
 
 if __name__ == "__main__":
