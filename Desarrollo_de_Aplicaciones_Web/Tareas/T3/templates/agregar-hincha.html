@@ -6,7 +6,7 @@
             <h1>Regístrate como hincha</h1>
         </div>
         {% if errors %}
-            <div class="red box">
+            <div class="red box" id="db_msg_div">
                 <h2>Ha ocurrido un error</h2>
                 <ul class="list">
                     {% for error in errors %}
@@ -62,11 +62,11 @@
                 <div>Medio de transporte</div>
                 <div id="transport_radio">
                     <div>
-                        <input type="radio" name="transport" id="public_transport" value="public">
+                        <input type="radio" name="transport" id="public_transport" value="locomoción pública">
                         <label for="public_transport">Locomoción pública</label>
                     </div>
                     <div>
-                        <input type="radio" name="transport" id="private_transport" value="private">
+                        <input type="radio" name="transport" id="private_transport" value="particular">
                         <label for="private_transport">Particular</label>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
             </div>
         </form>
     </div>
-    <div class="center" id="confirmation_div" hidden>
+    <div class="box" id="confirmation_div" hidden>
         <h2 id="confirmation_msg"></h2>
         <button type="button" id="confirm_btn">Sí, confirmo</button>
         <button type="button" id="back_to_form_btn">No, quiero volver al formulario</button>

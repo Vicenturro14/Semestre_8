@@ -189,7 +189,7 @@ const comunne_validation = (comunne) => {
 
 // Retorna una lista con un booleano indicando si se eligió una de las dos opciones de transporte y un mensaje en caso de error
 const transport_validation = (transport) => {
-    let valid_transport_bool = transport == "public" || transport == "private";
+    let valid_transport_bool = transport == "locomoción pública" || transport == "particular";
     let error_msg = "";
     if (!valid_transport_bool) error_msg = "Es necesario elegir un tipo de transporte";
     return [valid_transport_bool, error_msg];
@@ -315,7 +315,8 @@ const validate_hincha_form = () => {
     } else {
         msg_div.hidden = true;
         hincha_form.hidden = true;
-        ask_confirmation()
+        document.getElementById("db_msg_div").hidden = true;
+        ask_confirmation();
     }
 };
 

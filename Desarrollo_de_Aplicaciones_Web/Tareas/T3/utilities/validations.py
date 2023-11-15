@@ -22,6 +22,7 @@ def validate_region_comunne(region: str | None, comunne: str | None) -> tuple[bo
     
     return True, None
 
+
 def validate_handicraft_types(handicraft_type_1 : str, handicraft_type_2 : str, handicraft_type_3 : str) -> tuple[bool, str | None]:
     """Retorna un booleano indicando si los tipos de artesanía recibidos son válidos
     y un mensaje en caso de no ser válidos."""
@@ -41,12 +42,13 @@ def validate_handicraft_types(handicraft_type_1 : str, handicraft_type_2 : str, 
 
     # Se corrobora que todos los tipos de artesanías recibidos existan en la base de datos.
     for handicraft_type in handicraft_types:
-        handicraft_type_tuple = db.get_handicraft_type(handicraft_type.lower())
+        handicraft_type_tuple = db.get_handicraft_type_by_name(handicraft_type.lower())
         if handicraft_type_tuple is None:
             return False, "Al menos uno de los tipos de artesanía ingresados no es válido."
         
     return True, None
-            
+
+
 def validate_name(name : str | None) -> tuple[bool, str | None]:
     """Retorna un booleano indicando si el nombre recibido es válido 
     junto a un mensaje en caso de no ser válido."""
@@ -72,6 +74,7 @@ def validate_name(name : str | None) -> tuple[bool, str | None]:
     
     return status, msg 
 
+
 def validate_email(email : str | None) -> tuple[bool, str | None]:
     """Retorna un booleano indicando si el email recibido es válido 
     junto a un mensaje en caso de no serlo"""
@@ -87,6 +90,41 @@ def validate_email(email : str | None) -> tuple[bool, str | None]:
     
     return True, None
 
+
+def validate_artisan_email(email : str | None) -> tuple[bool, str | None]:
+    """Retorna un booleano indicando si el email recibido es válido y no está asociado a un artesano, 
+    junto a un mensaje en caso de error."""
+    
+    # Si el correo no es válido, se rechaza
+    valid_email, email_msg = validate_email(email)
+    if not valid_email:
+        return valid_email, email_msg
+    
+    # Si el correo es válido, se revisa si ya se encuentra asociado artesano en la base de datos.
+    # En caso de encontrarse, se rechaza.
+    if db.get_artisan_by_email(email) is not None:
+        return False, "El correo ya está asociado a otro artesano."
+    
+    return True, None
+
+
+def validate_supporter_email(email : str | None) -> tuple[bool, str | None]:
+    """Retorna un booleano indicando si el email recibido es válido y no está asociado a un hincha,
+    junto a un mensaje en caso de error."""
+
+    # Si el correo no es válido, se rechaza
+    valid_email, email_msg = validate_email(email)
+    if not valid_email:
+        return valid_email, email_msg
+    
+    # Si el correo es válido, se revisa si ya se encuentra asociado a un hincha en la base de datos.
+    # Se rechaza si lo está
+    if db.get_supporter_by_email(email) is not None:
+        return False, "El correo ya está asociado a otro hincha."
+    
+    return True, None
+
+
 def validate_phone(phone : str | None) -> tuple[bool, str | None]:
     """Retorna una tupla con un booleano indicando si el número de teléfono es válido y un mensaje de error.
     Se toma como válido no recibir número de teléfono."""
@@ -98,6 +136,7 @@ def validate_phone(phone : str | None) -> tuple[bool, str | None]:
         if not valid_phone:
             error_msg = "El número de teléfono debe ser de la forma +56 9 1234 5678"
     return valid_phone, error_msg
+
 
 def validate_images(image_1, image_2, image_3) -> tuple[bool, str | None]:
     """Retorna un booleano indicando si las imágenes recibidas son válidas 
@@ -128,6 +167,7 @@ def validate_images(image_1, image_2, image_3) -> tuple[bool, str | None]:
     
     return True, None
 
+
 def validate_artisan_form(form_dict : dict, image_1, image_2, image_3) -> tuple[bool, list[str]]:
     """Retorna un booleano indicando si el formulario y las imágenes recibidas son válidas, 
     junto a los mensajes de error de aquellos campos que no son válidos."""
@@ -153,7 +193,8 @@ def validate_artisan_form(form_dict : dict, image_1, image_2, image_3) -> tuple[
         error_messages.append(name_msg)
 
     # Validación de email
-    valid_email, email_msg = validate_email(form_dict.get("email"))
+    valid_email, email_msg = validate_artisan_email(form_dict.get("email"))
+
     if not valid_email:
         is_valid = False
         error_messages.append(email_msg)
@@ -172,6 +213,7 @@ def validate_artisan_form(form_dict : dict, image_1, image_2, image_3) -> tuple[
 
     return is_valid, error_messages
 
+
 def validate_sports(sports_list: list[str]) -> tuple[bool, str | None]:
     # Se revisa que se haya recibido al menos un deporte.
     sport_bool = False
@@ -181,15 +223,15 @@ def validate_sports(sports_list: list[str]) -> tuple[bool, str | None]:
     if not sport_bool:
         return False, "Es necesario elegir al menos un deporte."
     
-
     # Se filtran las entradas vacías.
     sports = [sport for sport in sports_list if (sport is not None and sport != "0")]
     for sport in sports:
-        sport_tuple = db.get_sport(sport)
+        sport_tuple = db.get_sport_by_name(sport)
         if sport_tuple is None:
             return False, "Al menos uno de los deportes ingresados no es válido."
     
     return True, None
+
 
 def validate_transport(transport : str | None):
     if transport is None:
@@ -199,6 +241,7 @@ def validate_transport(transport : str | None):
         return True, None
     
     return False, "Se debe seleccionar una opción válida."
+
 
 def validate_supporter_form(form_dict : dict) -> tuple[bool, list[str]]:
     """Retorna un booleano indicando si el formularion de hincha es válido o no,
@@ -213,31 +256,37 @@ def validate_supporter_form(form_dict : dict) -> tuple[bool, list[str]]:
     sport_3 = form_dict.get("sport_3")
     valid_sports, sports_msg = validate_sports([sport_1, sport_2, sport_3])
     if not valid_sports:
+        is_valid = False
         error_messages.append(sports_msg)
 
     # Validación de comuna y región
     valid_comunne_region, comunne_region_msg = validate_region_comunne(form_dict.get("region"), form_dict.get("comunne"))
     if not valid_comunne_region:
+        is_valid = False
         error_messages.append(comunne_region_msg)
 
     # Validación de medio de transporte
     valid_transport, transport_msg = validate_transport(form_dict.get("transport"))
     if not valid_transport:
+        is_valid = False
         error_messages.append(transport_msg)
 
     # Validación de nombre
     valid_name, name_msg = validate_name(form_dict.get("name"))
     if not valid_name:
+        is_valid = False
         error_messages.append(name_msg)
 
     # Validación de email
-    valid_email, email_msg = validate_email(form_dict.get("email"))
+    valid_email, email_msg = validate_supporter_email(form_dict.get("email"))
     if not valid_email:
+        is_valid = False
         error_messages.append(email_msg)
 
     # Validación de telefono
     valid_phone, phone_msg = validate_phone(form_dict.get("phone"))
     if not valid_phone:
+        is_valid = False
         error_messages.append(phone_msg)
 
     return is_valid, error_messages
