@@ -130,9 +130,8 @@ def agregar_hincha():
         return redirect(url_for("index", code= 2))
 
 @app.route("/ver_hinchas")
-def ver_hincha():
+def ver_hinchas():
     return render_template("ver-hinchas.html")
 
-# TODO: Validar que email no se encuentre en la base de datos. => email es único por cada hincha y por cada artesano
 if __name__ == "__main__":
     app.run(debug=True)

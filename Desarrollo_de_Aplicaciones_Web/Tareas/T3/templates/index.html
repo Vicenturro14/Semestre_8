@@ -13,21 +13,38 @@
         <div class="in_row">
             <div class="box">
                 <h2>Para Hinchas</h2>
-                <p>
-                    <a href="{{ url_for('agregar_hincha') }}">Registrar Hincha</a>
-                    <br>
-                    <a href="{{ url_for('ver_hincha') }}">Ver listado de hinchas</a>            
-                </p>
+                <div class="box button" id="register_supporter_btn">
+                    Registrar hincha
+                </div>
+                <div class="box button" id="supporters_list_btn">
+                    Ver listado de hinchas
+                </div>
             </div>
             <div class="box">
                 <h2>Para Artesanos</h2>
-                <p>
-                    <a href="{{ url_for('agregar_artesano') }}">Registrar Artesano</a>
-                    <br>
-                    <a href="{{ url_for('ver_artesanos')}}">Ver listado de artesanos</a>            
-                </p>
+                <div class="box button" id="register_artisan_btn">
+                    Registrar artesano
+                </div>
+                <div class="box button" id="artisans_list_btn">
+                    Ver listado de artesanos
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="box">
+                <h2>Estadísticas de registro</h2>
+                <div class="box button">
+                    Gráficos
+                </div>
             </div>
         </div>
     </div>
 {% endblock %}
-{% block javascript %}{% endblock %}
+{% block javascript %}
+    <script>
+        document.getElementById("register_supporter_btn").addEventListener("click", () => {window.location.href = "{{ url_for('agregar_hincha') }}"})
+        document.getElementById("supporters_list_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_hinchas') }}"})
+        document.getElementById("register_artisan_btn").addEventListener("click", () => {window.location.href = "{{ url_for('agregar_artesano') }}"})
+        document.getElementById("artisans_list_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_artesanos') }}"})
+    </script>
+{% endblock %}

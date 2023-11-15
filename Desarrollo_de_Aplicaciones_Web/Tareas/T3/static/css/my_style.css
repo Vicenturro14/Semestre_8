@@ -1,5 +1,6 @@
 .title {
     text-align: center;
+    font-size: 1.5em;
 }
 
 .center {
@@ -51,6 +52,15 @@
 .red {
     background-color: #FFCCCC;
     border-color: #b10101;
+}
+.button {
+    width: 85%;
+    cursor: pointer;
+    margin: 2% auto;
+}
+
+.button:hover {
+    background-color: rgb(219, 219, 219);
 }
 
 .black {
