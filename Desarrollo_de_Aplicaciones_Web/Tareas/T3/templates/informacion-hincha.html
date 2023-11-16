@@ -4,44 +4,52 @@
     <div class="title">
         <h1>Ficha de Hincha</h1>
     </div>
-    <div>
+    <div class="box">
         <div>
             <div>
-                <div>Nombre</div>
-                <div>Dylan Riquelme</div>
+                <h3>Nombre</h3>
+                <div> {{context.name}} </div>
             </div>
             <div>
-                <div>Región</div>
-                <div>Región Metropolitana</div>
+                <h3>Correo electrónico</h3>
+                <div> {{context.email}} </div>
             </div>
             <div>
-                <div>Comuna</div>
-                <div>Vitacura</div>
+                <h3>Número de celular</h3>
+                <div> {{context.phone}} </div>
             </div>
             <div>
-                <div>Deportes</div>
-                <div>Marcha</div>
+                <h3>Región</h3>
+                <div>{{context.region}}</div>
+            </div>
+            <div>
+                <h3>Comuna</h3>
+                <div>{{context.comunne}}</div>
             </div>
             <div>
                 <div>Modo de transporte</div>
                 <div>Locomoción Pública</div>
             </div>
             <div>
-                <div>Correo electrónico</div>
-                <div>dylan_riquelme@hola.correo.cl</div>
+                <h3>Deportes</h3>
+                <div>
+                    {% for sport in context.sports %}
+                        {{sport}} <br>
+                    {% endfor %}
+                </div>
             </div>
             <div>
-                <div>Número de celular</div>
-                <div>+56 9 1234 5678</div>
-            </div>
-            <div>
-                <div>Comentarios</div>
-                <div>-</div>
+                <h3>Comentarios</h3>
+                <div>{{context.comments}}</div>
             </div>
         </div>
-        <button type="button" id="back_to_list_btn">Volver al listado</button>
+        <div>
+            <button type="button" id="back_to_list_btn">Volver al listado</button>
+        </div>
     </div>
 {% endblock %}
 {% block javascript %}
-    <script src="{{ url_for('static', filename='js/informacion-hincha.js') }}"></script>
+    <script>
+        document.getElementById("back_to_list_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_hinchas') }}"})
+    </script>
 {% endblock %}

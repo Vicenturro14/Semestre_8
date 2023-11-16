@@ -315,7 +315,6 @@ const validate_hincha_form = () => {
     } else {
         msg_div.hidden = true;
         hincha_form.hidden = true;
-        document.getElementById("db_msg_div").hidden = true;
         ask_confirmation();
     }
 };

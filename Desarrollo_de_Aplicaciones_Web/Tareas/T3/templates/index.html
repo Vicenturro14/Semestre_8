@@ -43,8 +43,8 @@
 {% block javascript %}
     <script>
         document.getElementById("register_supporter_btn").addEventListener("click", () => {window.location.href = "{{ url_for('agregar_hincha') }}"})
-        document.getElementById("supporters_list_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_hinchas') }}"})
+        document.getElementById("supporters_list_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_hinchas', page=1) }}"})
         document.getElementById("register_artisan_btn").addEventListener("click", () => {window.location.href = "{{ url_for('agregar_artesano') }}"})
-        document.getElementById("artisans_list_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_artesanos') }}"})
+        document.getElementById("artisans_list_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_artesanos', page=1) }}"})
     </script>
 {% endblock %}

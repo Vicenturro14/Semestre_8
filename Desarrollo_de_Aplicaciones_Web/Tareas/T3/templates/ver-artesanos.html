@@ -4,7 +4,7 @@
     <div class="title">
         <h1>Listado de artesanas y artesanos registrados</h1>
     </div>
-    <div>
+    <div id="artisans_table">
         <table>
             <thead>
                 <tr>
@@ -16,56 +16,44 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>
-                        <a href="{{ url_for('informacion_artesano')}}">Juan Tacchi</a>
-                    </td>
-                    <td>+56 9 1234 5678</td>
-                    <td>La Florida</td>
-                    <td>Madera</td>
-                    <td><img src="../images/minero_madera_5x4.jpg" alt="Minero tallado en madera" height="120" width="120"></td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="{{ url_for('informacion_artesano')}}">Martin Paredes</a>
-                    </td>
-                    <td>No especificado</td>
-                    <td>El Carmen</td>
-                    <td>Cerámica</td>
-                    <td><img src="../images/tortuga_cerámica_5x4.jpg" alt="Tortuga de cerámica" height="120" width="120"></td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="{{ url_for('informacion_artesano')}}">Pilar Leiva</a>
-                    </td>
-                    <td>+56 9 5678 1253</td>
-                    <td>Curicó</td>
-                    <td>Metal</td>
-                    <td><img src="../images/metalico_5x4.jpg" alt="Lapicero metálico" height="120" width="120"></td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="{{ url_for('informacion_artesano')}}">Juan Carlos Salas</a>
-                    </td>
-                    <td>+56 9 7485 5870</td>
-                    <td>San Javier</td>
-                    <td>Otro tipo</td>
-                    <td><img src="../images/huaso_bola_5x4.jpg" alt="Huaso dentro de una bola de vidrio" height="120" width="120"></td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="{{ url_for('informacion_artesano')}}">Arturo Kullmer</a>
-                    </td>
-                    <td>No especificado</td>
-                    <td>Panguipulli</td>
-                    <td>Joyas</td>
-                    <td><img src="../images/aros_5x4.jpg" alt="Tres pares de aros" height="120" width="120"></td>
-                </tr>
+                {% for artisan in context.artisans %}
+                    <tr onclick="window.location.href = '{{artisan.info_path}}'">
+                        <td> {{artisan.name}} </td>
+                        <td> {{artisan.phone}} </td>
+                        <td> {{artisan.comunne}} </td>
+                        <td>
+                            {% for handicraft_type in artisan.handicraft_types %}
+                                {{handicraft_type.capitalize()}} <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <img src="{{artisan.image_path}}" alt="Artesanía de {{artisan.name}}" class="table_img">
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
-        <button type="button" id="go_to_index_btn">Volver al Inicio</button>
+    </div>
+    <div class="in_row">
+        {% if context.page_num > 1 %}
+            <button type="button" id="prev_page_btn">Anterior</button>
+        {% endif %}
+        {% if context.page_num != context.total_pages_num %}
+            <button type="button" id="next_page_btn">Siguiente</button>
+        {% endif %}
+    </div>
+    <div>
+        <button type="button" id="back_to_index_btn">Volver al Inicio</button>
     </div>
 {% endblock %}
 {% block javascript %}
-    <script src="../static/js/listado.js"></script>
+    <script>
+        document.getElementById("back_to_index_btn").addEventListener("click", () => {window.location.href = "{{ url_for('index') }}"});
+        if ({{context.page_num}} > 1) {
+            document.getElementById("prev_page_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_artesanos', page= (context.page_num - 1)) }}"});
+        }
+        if ({{context.page_num}} != {{context.total_pages_num}}) {
+            document.getElementById("next_page_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_artesanos', page= (context.page_num + 1)) }}"});
+        }
+    </script>
 {% endblock %}

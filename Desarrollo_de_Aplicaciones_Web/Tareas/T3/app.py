@@ -5,17 +5,22 @@ from werkzeug.utils import secure_filename
 import hashlib
 import filetype
 import os
+import math
+import uuid
 
 UPLOAD_FOLDER = "static/uploads"
 app = Flask(__name__)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
+
 @app.route("/", defaults={"code" : 0})
 @app.route("/<int:code>")
 def index(code):
     messages = [None, "El artesano se ha registrado con éxito", "El hincha se ha registrado con éxito"]
-    return render_template("index.html", message = messages[code])
+    i = code if 0 <= code < len(messages) else 0
+    return render_template("index.html", message = messages[i])
+
 
 # Artesanos
 @app.route("/agregar_artesano", methods = ["GET", "POST"])
@@ -58,8 +63,7 @@ def agregar_artesano():
             handicraft_type_id, _ = db.get_handicraft_type_by_name(h_type)
             db.create_artisan_type(artisan_id, handicraft_type_id)
 
-        # Se guardan las imágenes en el sistema de archivos y 
-        # sus respectivas rutas en la base de datos.
+        # Se guardan las imágenes en el sistema de archivos y sus respectivas rutas en la base de datos.
         images = []
         if image_1:
             images.append(image_1)
@@ -68,26 +72,55 @@ def agregar_artesano():
         if image_3:
             images.append(image_3)
         for image in images:
-            image_name = hashlib.sha3_256(secure_filename(image.filename).encode("utf-8")).hexdigest()
+            hash_image_name = hashlib.sha256(secure_filename(image.filename).encode("utf-8")).hexdigest()
             image_extension = filetype.guess(image).extension
-            image_file_name = f"{image_name}.{image_extension}"
-            image_path = os.path.join(app.config["UPLOAD_FOLDER"], image_file_name)
+            unique_image_name = f"{hash_image_name}_{str(uuid.uuid4())}.{image_extension}"
+            image_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_image_name)
+
             # Se guarda imagen en sistema de archivos
             image.save(image_path)
             # Se guarda imagen en base de datos
-            db.create_image(image_path, image_file_name, artisan_id)
+
+            db.create_image(url_for("static", filename= f"uploads/{unique_image_name}"), unique_image_name, artisan_id)
 
         # Finalmente, se redirige a la página principal.
         return redirect(url_for("index", code= 1))
 
+@app.route("/ver_artesanos", defaults = {"page":1})
+@app.route("/ver_artesanos/<int:page>")
+def ver_artesanos(page : int):
+    artisans_num = db.get_registered_artisans_num()
+    total_pages_num = math.ceil(artisans_num/5)
+    # Se revisa que el número de página recibido por la URL esté dentro del rango posible.
+    if page < 1:
+        p = 1
+    elif page > total_pages_num:
+        p = total_pages_num
+    else:
+        p = page
 
-@app.route("/ver_artesanos")
-def ver_artesanos():
-    return render_template("ver-artesanos.html")
+    artisans = []
+    for artisan in db.get_artisans(5, 5*(p-1)):
+        
+        artisan_id, name, phone, comunne_id = artisan
+        comunne = db.get_comunne_by_id(comunne_id)[1]
+        handicraft_types = [h_type[0] for h_type in db.get_handicraft_types_by_artisan_id(artisan_id)] 
+        _, image_path, _, _ = db.get_image_by_artisan_id(artisan_id)
+        info_path = url_for("informacion_artesano", id = artisan_id)
+        artisans.append({"id" : artisan_id, "name": name, "phone" : phone, "comunne" : comunne, "handicraft_types" : handicraft_types, "image_path" : image_path, "info_path" : info_path})
+    return render_template("ver-artesanos.html", context = {"page_num" : p, "total_pages_num" : total_pages_num, "artisans" : artisans})
 
-@app.route("/informacion_artesano")
-def informacion_artesano():
-    return render_template("informacion-artesano.html")
+
+@app.route("/informacion_artesano/<int:id>")
+def informacion_artesano(id : int):
+    # Se obtiene la información del artesano
+    _, commune_id, handicraft_desc, name, email, phone = db.get_artisan_by_id(id)
+    comunne, region = db.get_comunne_region_names_by_comunne_id(commune_id)
+    handicraft_types = [h_type[0] for h_type in db.get_handicraft_types_by_artisan_id(id)] 
+    images_paths = [image[1] for image in db.get_images_by_artisan_id(id)]
+    context = {"comunne" : comunne, "region" : region, "handicraft_desc" : handicraft_desc, "name" : name, "email" : email, "phone" : phone, "handicraft_types" : handicraft_types, "images_paths" : images_paths}
+    return render_template("informacion-artesano.html", context = context)
+
 
 
 # Hinchas
@@ -129,9 +162,39 @@ def agregar_hincha():
         # Finalmente se redirecciona a la página principal
         return redirect(url_for("index", code= 2))
 
-@app.route("/ver_hinchas")
-def ver_hinchas():
-    return render_template("ver-hinchas.html")
+@app.route("/ver_hinchas", defaults = {"page":1})
+@app.route("/ver_hinchas/<int:page>")
+def ver_hinchas(page : int):
+    supporters_num = db.get_registered_supporters_num()
+    total_pages_num = math.ceil(supporters_num/5)
+    if page < 1:
+        p = 1
+    elif page > total_pages_num:
+        p = total_pages_num
+    else:
+        p = page
+
+    supporters = []
+    for supporter in db.get_supporters(5, 5*(p-1)):
+        supporter_id, name, comunne_id, transport, phone = supporter
+        comunne = db.get_comunne_by_id(comunne_id)[1]
+        sports = [sport[0] for sport in db.get_sports_names_by_supporter_id(supporter_id)]
+        info_path = url_for("informacion_hincha", id = supporter_id)
+        supporters.append({"id": supporter_id, "name" : name, "comunne": comunne, "transport" : transport, "sports" : sports, "phone": phone, "info_path": info_path})
+    context = {"page_num" : p, "total_pages_num" : total_pages_num, "supporters" : supporters}
+    return render_template("ver-hinchas.html", context=context)
+
+@app.route("/informacion_hincha/<int:id>")
+def informacion_hincha(id : int):
+    _, comunne_id, transport, name, email, phone, comments = db.get_supporter_by_id(id)
+    comunne, region = db.get_comunne_region_names_by_comunne_id(comunne_id)
+    sports = [sport[0] for sport in db.get_sports_names_by_supporter_id(id)]
+    context = {"comunne" : comunne, "region" : region, "name" : name, "email" : email, "phone" : phone, "transport" : transport, "sports" : sports, "comments":comments}
+    return render_template("informacion-hincha.html", context=context)
+
+@app.route("/graficos")
+def graficos():
+    return render_template("graficos.hmtl")
 
 if __name__ == "__main__":
     app.run(debug=True)

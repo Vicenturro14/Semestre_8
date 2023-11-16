@@ -44,6 +44,28 @@
 .list {
     text-align: left;
 }
+.button {
+    width: 85%;
+    cursor: pointer;
+    margin: 2% auto;
+}
+.button:hover {
+    background-color: rgb(219, 219, 219);
+}
+
+.table_img {
+    width: 120px;
+    height: 120px;
+}
+.normal_img {
+    width: 640px;
+    height: 480px;
+}
+.big_img {
+    width: 1280px;
+    height: 1024px;
+}
+
 /* Colores */
 .green {
     background-color: #72FC64;
@@ -53,16 +75,6 @@
     background-color: #FFCCCC;
     border-color: #b10101;
 }
-.button {
-    width: 85%;
-    cursor: pointer;
-    margin: 2% auto;
-}
-
-.button:hover {
-    background-color: rgb(219, 219, 219);
-}
-
 .black {
     border-color: black;
 }

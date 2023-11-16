@@ -1,53 +1,63 @@
 {% extends 'base.html' %}
 {% block title %} Ficha de Artesano/a {% endblock %}
 {% block content %}
-    <div id="info_div">
+    <div id="info_div" class="box">
         <div class="title">
             <h1>Ficha de Hincha</h1>
         </div>
         <div>
             <div>
                 <div>
-                    <div>Nombre</div>
-                    <div>Juan Tacchi</div>
+                    <h3>Nombre</h3>
+                    <div> {{context.name}} </div>
                 </div>
                 <div>
-                    <div>Correo electrónico</div>
-                    <div>juan.tacchi@gmail.com</div>
+                    <h3>Correo electrónico</h3>
+                    <div> {{context.email}} </div>
                 </div>
                 <div>
-                    <div>Número de celular</div>
-                    <div>+56 9 1234 5678</div>
+                    <h3>Número de celular</h3>
+                    <div> {{context.phone}} </div>
                 </div>
                 <div>
-                    <div>Región</div>
-                    <div>Región Metropolitana</div>
+                    <h3>Región</h3>
+                    <div>{{context.region}}</div>
                 </div>
                 <div>
-                    <div>Comuna</div>
-                    <div>La Florida</div>
+                    <h3>Comuna</h3>
+                    <div>{{context.comunne}}</div>
                 </div>
                 <div>
-                    <div>Tipo de artesanía</div>
-                    <div>Madera</div>
+                    <h3>Tipo de artesanía</h3>
+                    <div>
+                        {% for type in context.handicraft_types %}
+                            {{type}} <br>
+                        {% endfor %}
+                    </div>
                 </div>
                 <div>
-                    <div>Descripción de artesanía</div>
-                    <div>Minero tallado en madera</div>
+                    <h3>Descripción de artesanía</h3>
+                    <div>{{context.handicraft_desc}}</div>
                 </div>
             </div>
             <div>
-                <img id="normal_image" src="../images/minero_madera_5x4.jpg" alt="Minero tallado en madera" height="480" width="640">
-            </div>
+                <h3>Imágenes</h3>
+                <div class="in_row">
+                    {% for image_path in context.images_paths %}
+                        <img class="normal_img" src="{{image_path}}" alt="Artesanía de {{context.name}}" id="image_{{loop.index}}" onclick="change_image_size('image_{{loop.index}}')">
+                    {% endfor %}
+                </div>
+            </div>  
             <div>
                 <button type="button" id="back_to_list_btn">Volver al listado</button>
             </div>
         </div>
     </div>
-    <div id="image_div" hidden>
-        <img src="../images/minero_madera_5x4.jpg" alt="Minero tallado en madera" height="1024" width="1280" id="big_image">
-    </div>
+
 {% endblock %}
 {% block javascript %}
-    <script src="{{ url_for('static', filename='js/informacion-artesano.js') }}"></script>
+    <script>
+        document.getElementById("back_to_list_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_artesanos') }}"})
+    </script>
+    <script src="{{ url_for('static', filename='js/informacion.js') }}"></script>
 {% endblock %}
