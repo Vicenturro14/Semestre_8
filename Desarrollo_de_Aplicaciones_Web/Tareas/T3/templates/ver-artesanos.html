@@ -4,8 +4,8 @@
     <div class="title">
         <h1>Listado de artesanas y artesanos registrados</h1>
     </div>
-    <div id="artisans_table">
-        <table>
+    <div id="artisans_table" class="box">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -33,17 +33,17 @@
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-    <div class="in_row">
-        {% if context.page_num > 1 %}
-            <button type="button" id="prev_page_btn">Anterior</button>
-        {% endif %}
-        {% if context.page_num != context.total_pages_num %}
-            <button type="button" id="next_page_btn">Siguiente</button>
-        {% endif %}
-    </div>
-    <div>
-        <button type="button" id="back_to_index_btn">Volver al Inicio</button>
+        <div class="in_row">
+            {% if context.page_num > 1 %}
+                <button type="button" id="prev_page_btn">Anterior</button>
+            {% endif %}
+            {% if context.page_num != context.total_pages_num %}
+                <button type="button" id="next_page_btn">Siguiente</button>
+            {% endif %}
+        </div>
+        <div>
+            <button type="button" id="back_to_index_btn">Volver al Inicio</button>
+        </div>
     </div>
 {% endblock %}
 {% block javascript %}

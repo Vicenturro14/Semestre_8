@@ -199,9 +199,28 @@ def get_images_by_artisan_id(artisan_id : int) -> tuple:
 	return images_tuple
 
 def get_sports_names_by_supporter_id(supporter_id : int) -> tuple:
+	"""Retorna los nombres de los deportes asociados al hincha indicado por el id recibido."""
 	conn = get_conn()
 	cursor = conn.cursor()
 	query = "SELECT deporte.nombre FROM hincha_deporte JOIN deporte ON hincha_deporte.deporte_id=deporte.id WHERE hincha_deporte.hincha_id= %s;"
 	cursor.execute(query, (supporter_id,))
 	sports = cursor.fetchall()
 	return sports
+
+def get_artisans_per_type() -> tuple:
+	"""Retorna la cantidad de artesanos asociados a cada tipo de artesanía."""
+	conn = get_conn()
+	cursor = conn.cursor()
+	query = "SELECT tipo_artesania.nombre, COUNT(*) FROM artesano_tipo JOIN tipo_artesania ON artesano_tipo.tipo_artesania_id = tipo_artesania.id GROUP BY tipo_artesania.nombre;"	
+	cursor.execute(query)
+	artisans_per_type = cursor.fetchall()
+	return artisans_per_type
+
+def get_supporters_per_sport() -> tuple:
+	"""Retorna la cantidad de hinchas asociados a cada deporte."""
+	conn = get_conn()
+	cursor = conn.cursor()
+	query = "SELECT deporte.nombre, COUNT(*) FROM hincha_deporte JOIN deporte ON hincha_deporte.deporte_id = deporte.id GROUP BY deporte.nombre;"	
+	cursor.execute(query)
+	supporters_per_sport = cursor.fetchall()
+	return supporters_per_sport

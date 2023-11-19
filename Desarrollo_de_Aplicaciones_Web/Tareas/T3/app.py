@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, jsonify
+from flask_cors import cross_origin
 from utilities.validations import validate_artisan_form, validate_supporter_form
 from database import db
 from werkzeug.utils import secure_filename
@@ -7,6 +8,7 @@ import filetype
 import os
 import math
 import uuid
+from markupsafe import escape
 
 UPLOAD_FOLDER = "static/uploads"
 app = Flask(__name__)
@@ -104,10 +106,14 @@ def ver_artesanos(page : int):
         
         artisan_id, name, phone, comunne_id = artisan
         comunne = db.get_comunne_by_id(comunne_id)[1]
-        handicraft_types = [h_type[0] for h_type in db.get_handicraft_types_by_artisan_id(artisan_id)] 
+        handicraft_types = [escape(h_type[0]) for h_type in db.get_handicraft_types_by_artisan_id(artisan_id)] 
         _, image_path, _, _ = db.get_image_by_artisan_id(artisan_id)
         info_path = url_for("informacion_artesano", id = artisan_id)
-        artisans.append({"id" : artisan_id, "name": name, "phone" : phone, "comunne" : comunne, "handicraft_types" : handicraft_types, "image_path" : image_path, "info_path" : info_path})
+        artisans.append({
+            "id" : artisan_id, "name": escape(name), "phone" : escape(phone), "comunne" : escape(comunne),
+            "handicraft_types" : handicraft_types, "image_path" : image_path, "info_path" : info_path
+            })
+    
     return render_template("ver-artesanos.html", context = {"page_num" : p, "total_pages_num" : total_pages_num, "artisans" : artisans})
 
 
@@ -116,9 +122,10 @@ def informacion_artesano(id : int):
     # Se obtiene la información del artesano
     _, commune_id, handicraft_desc, name, email, phone = db.get_artisan_by_id(id)
     comunne, region = db.get_comunne_region_names_by_comunne_id(commune_id)
-    handicraft_types = [h_type[0] for h_type in db.get_handicraft_types_by_artisan_id(id)] 
+    handicraft_types = [escape(h_type[0]) for h_type in db.get_handicraft_types_by_artisan_id(id)] 
     images_paths = [image[1] for image in db.get_images_by_artisan_id(id)]
-    context = {"comunne" : comunne, "region" : region, "handicraft_desc" : handicraft_desc, "name" : name, "email" : email, "phone" : phone, "handicraft_types" : handicraft_types, "images_paths" : images_paths}
+    context = {"comunne" : escape(comunne), "region" : escape(region), "handicraft_desc" : escape(handicraft_desc), "name" : escape(name), "email" : escape(email),
+                "phone" : escape(phone), "handicraft_types" : handicraft_types, "images_paths" : images_paths}
     return render_template("informacion-artesano.html", context = context)
 
 
@@ -178,23 +185,37 @@ def ver_hinchas(page : int):
     for supporter in db.get_supporters(5, 5*(p-1)):
         supporter_id, name, comunne_id, transport, phone = supporter
         comunne = db.get_comunne_by_id(comunne_id)[1]
-        sports = [sport[0] for sport in db.get_sports_names_by_supporter_id(supporter_id)]
+        sports = [escape(sport[0]) for sport in db.get_sports_names_by_supporter_id(supporter_id)]
         info_path = url_for("informacion_hincha", id = supporter_id)
-        supporters.append({"id": supporter_id, "name" : name, "comunne": comunne, "transport" : transport, "sports" : sports, "phone": phone, "info_path": info_path})
+        supporters.append({"id": supporter_id, "name" : escape(name), "comunne": escape(comunne), "transport" : escape(transport), "sports" : sports, "phone": escape(phone), "info_path": info_path})
     context = {"page_num" : p, "total_pages_num" : total_pages_num, "supporters" : supporters}
     return render_template("ver-hinchas.html", context=context)
+
 
 @app.route("/informacion_hincha/<int:id>")
 def informacion_hincha(id : int):
     _, comunne_id, transport, name, email, phone, comments = db.get_supporter_by_id(id)
     comunne, region = db.get_comunne_region_names_by_comunne_id(comunne_id)
-    sports = [sport[0] for sport in db.get_sports_names_by_supporter_id(id)]
-    context = {"comunne" : comunne, "region" : region, "name" : name, "email" : email, "phone" : phone, "transport" : transport, "sports" : sports, "comments":comments}
+    sports = [escape(sport[0]) for sport in db.get_sports_names_by_supporter_id(id)]
+    context = {"comunne" : escape(comunne), "region" : escape(region), "name" : escape(name), "email" : escape(email), "phone" : escape(phone), "transport" : escape(transport), "sports" : sports, "comments":escape(comments)}
     return render_template("informacion-hincha.html", context=context)
 
 @app.route("/graficos")
 def graficos():
-    return render_template("graficos.hmtl")
+    return render_template("graficos.html")
+
+@app.route("/datos_graficos")
+@cross_origin(origins="localhost", supports_credentials=True)
+def datos_graficos():
+    supporters_per_sport = db.get_supporters_per_sport()
+    artisans_per_type = db.get_artisans_per_type()
+    data = [
+        [{"sport" : sport_data[0], "count" : sport_data[1]} for sport_data in supporters_per_sport],
+        [{"type" : type_data[0].capitalize(), "count" : type_data[1]} for type_data in artisans_per_type]
+    ]
+    
+    return jsonify(data)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

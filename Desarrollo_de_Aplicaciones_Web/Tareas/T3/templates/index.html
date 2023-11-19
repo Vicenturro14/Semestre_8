@@ -33,7 +33,7 @@
         <div>
             <div class="box">
                 <h2>Estadísticas de registro</h2>
-                <div class="box button">
+                <div class="box button" id="charts_btn">
                     Gráficos
                 </div>
             </div>
@@ -46,5 +46,6 @@
         document.getElementById("supporters_list_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_hinchas', page=1) }}"})
         document.getElementById("register_artisan_btn").addEventListener("click", () => {window.location.href = "{{ url_for('agregar_artesano') }}"})
         document.getElementById("artisans_list_btn").addEventListener("click", () => {window.location.href = "{{ url_for('ver_artesanos', page=1) }}"})
+        document.getElementById("charts_btn").addEventListener("click", () => {window.location.href = "{{ url_for('graficos') }}"})
     </script>
 {% endblock %}
