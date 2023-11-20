@@ -122,7 +122,7 @@ def informacion_artesano(id : int):
     # Se obtiene la información del artesano
     _, commune_id, handicraft_desc, name, email, phone = db.get_artisan_by_id(id)
     comunne, region = db.get_comunne_region_names_by_comunne_id(commune_id)
-    handicraft_types = [escape(h_type[0]) for h_type in db.get_handicraft_types_by_artisan_id(id)] 
+    handicraft_types = [escape(h_type[0].capitalize()) for h_type in db.get_handicraft_types_by_artisan_id(id)] 
     images_paths = [image[1] for image in db.get_images_by_artisan_id(id)]
     context = {"comunne" : escape(comunne), "region" : escape(region), "handicraft_desc" : escape(handicraft_desc), "name" : escape(name), "email" : escape(email),
                 "phone" : escape(phone), "handicraft_types" : handicraft_types, "images_paths" : images_paths}
@@ -187,7 +187,7 @@ def ver_hinchas(page : int):
         comunne = db.get_comunne_by_id(comunne_id)[1]
         sports = [escape(sport[0]) for sport in db.get_sports_names_by_supporter_id(supporter_id)]
         info_path = url_for("informacion_hincha", id = supporter_id)
-        supporters.append({"id": supporter_id, "name" : escape(name), "comunne": escape(comunne), "transport" : escape(transport), "sports" : sports, "phone": escape(phone), "info_path": info_path})
+        supporters.append({"id": supporter_id, "name" : escape(name), "comunne": escape(comunne), "transport" : escape(transport.capitalize()), "sports" : sports, "phone": escape(phone), "info_path": info_path})
     context = {"page_num" : p, "total_pages_num" : total_pages_num, "supporters" : supporters}
     return render_template("ver-hinchas.html", context=context)
 

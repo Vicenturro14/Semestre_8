@@ -5,7 +5,7 @@
         <div class="title">
             <h1>Ficha de Hincha</h1>
         </div>
-        <div>
+        <div class="in_row">
             <div>
                 <div>
                     <h3>Nombre</h3>
@@ -42,15 +42,15 @@
             </div>
             <div>
                 <h3>Imágenes</h3>
-                <div class="in_row">
+                <div>
                     {% for image_path in context.images_paths %}
                         <img class="normal_img" src="{{image_path}}" alt="Artesanía de {{context.name}}" id="image_{{loop.index}}" onclick="change_image_size('image_{{loop.index}}')">
                     {% endfor %}
                 </div>
             </div>  
-            <div>
-                <button type="button" id="back_to_list_btn">Volver al listado</button>
-            </div>
+        </div>
+        <div>
+            <button type="button" id="back_to_list_btn">Volver al listado</button>
         </div>
     </div>
 
