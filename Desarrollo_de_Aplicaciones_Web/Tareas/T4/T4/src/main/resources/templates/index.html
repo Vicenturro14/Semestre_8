@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Juegos Paramericanos Santiago 2023</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/my_style.css}">
+</head>
+<body class="blue">
+<div>
+    <div class="title">
+        <h1>¡Te damos la bienvenida a los Juegos Panamericanos Chile 2023!</h1>
+    </div>
+    <div class="box green" th:if="${message}">
+        <h2 th:text="${message}"></h2>
+    </div>
+    <div class="in_row">
+        <div class="box">
+            <h2>Para Hinchas</h2>
+            <div class="box button" id="register_supporter_btn">
+                Registrar hincha
+            </div>
+            <div class="box button" id="supporters_list_btn">
+                Ver listado de hinchas
+            </div>
+        </div>
+        <div class="box">
+            <h2>Para Artesanos</h2>
+            <div class="box button" id="register_artisan_btn">
+                Registrar artesano
+            </div>
+            <div class="box button" id="artisans_list_btn">
+                Ver listado de artesanos
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="box">
+            <h2>Comentarios</h2>
+            <div class="box button" id="search_btn">
+                Buscador
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="box">
+            <h2>Estadísticas de registro</h2>
+            <div class="box button" id="charts_btn">
+                Gráficos
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("register_supporter_btn").addEventListener("click", () => {window.location.href = "/agregar_hincha"})
+    document.getElementById("supporters_list_btn").addEventListener("click", () => {window.location.href = "/ver_hinchas"})
+    document.getElementById("register_artisan_btn").addEventListener("click", () => {window.location.href = "/agregar_artesano"})
+    document.getElementById("artisans_list_btn").addEventListener("click", () => {window.location.href = "/ver_artesanos"})
+    document.getElementById("charts_btn").addEventListener("click", () => {window.location.href = "/graficos"})
+    document.getElementById("search_btn").addEventListener("click", () => {window.location.href = "/buscador"})
+</script>
+</body>
+</html>
